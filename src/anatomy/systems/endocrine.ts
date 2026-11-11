@@ -1,6 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Módulo: Sistema Endocrino (Systema endocrinum)
+ * Timo y páncreas NIH HRA + tiroides, hipófisis y suprarrenales PBR
  * PC PUMA – UNAM
  */
 
@@ -12,6 +13,7 @@ export class EndocrineSystem {
   public readonly group: THREE.Group;
   public readonly id = 'endocrine';
   public readonly name = 'Sistema Endocrino';
+
   public thymusMesh: THREE.Group | null = null;
   public pancreasMesh: THREE.Group | null = null;
   public thyroidMesh: THREE.Mesh | null = null;
@@ -31,6 +33,7 @@ export class EndocrineSystem {
   public async load(loader: GLTFLoader, onProgress?: (percent: number) => void): Promise<THREE.Group> {
     this.buildThyroidPituitaryAndAdrenals();
 
+    // 1. Timo anatómico (Mediastino anterosuperior, maduración de linfocitos T)
     const loadThymus = new Promise<void>((resolve) => {
       loader.load(
         resolveModelUrl('models/thymus.glb'),
@@ -39,20 +42,24 @@ export class EndocrineSystem {
           this.thymusMesh.name = 'Anatomical_Thymus';
 
           const mat = new THREE.MeshStandardMaterial({
-            color: 0xa855f7,
+            color: 0xad7080, // Tono linfoide rosado pálido
             roughness: 0.35,
-            metalness: 0.1,
+            metalness: 0.05,
+            clearcoat: 0.6,
+            clearcoatRoughness: 0.2,
           });
 
           this.thymusMesh.traverse((c) => {
             if ((c as THREE.Mesh).isMesh) {
               const mesh = c as THREE.Mesh;
+              mesh.castShadow = true;
+              mesh.receiveShadow = true;
               mesh.material = mat.clone();
               this.endocrineMaterials.push(mesh.material as THREE.MeshStandardMaterial);
               mesh.userData = {
                 systemId: 'endocrine',
                 structureId: 'thymus',
-                structureName: 'Timo (Lóbulos Bilaterales)',
+                structureName: 'Timo (Lóbulos Bilaterales Mediastínicos)',
                 selectable: true,
               };
             }
@@ -64,15 +71,15 @@ export class EndocrineSystem {
           const center = new THREE.Vector3();
           box.getCenter(center);
 
-          const targetHeight = 0.07;
+          const targetHeight = 0.075;
           const scale = targetHeight / (size.y || 1);
           this.thymusMesh.scale.setScalar(scale);
 
-          // Mediastinum anterior/superior: Y ~ 1.40m, Z ~ 0.04m
+          // Mediastino anterior/superior por delante del cayado aórtico: Y ~ 1.39m, Z ~ 0.038m
           this.thymusMesh.position.set(
             -center.x * scale,
-            -center.y * scale + 1.40,
-            -center.z * scale + 0.038
+            -center.y * scale + 1.39,
+            -center.z * scale + 0.035
           );
 
           this.group.add(this.thymusMesh);
@@ -83,6 +90,7 @@ export class EndocrineSystem {
       );
     });
 
+    // 2. Páncreas anatómico (Cabeza, cuello, cuerpo y cola en curvatura duodenal)
     const loadPancreas = new Promise<void>((resolve) => {
       loader.load(
         resolveModelUrl('models/pancreas.glb'),
@@ -91,20 +99,24 @@ export class EndocrineSystem {
           this.pancreasMesh.name = 'Anatomical_Pancreas';
 
           const mat = new THREE.MeshStandardMaterial({
-            color: 0xf59e0b,
-            roughness: 0.4,
-            metalness: 0.05,
+            color: 0xd49b49, // Glándula exocrina/endocrina lobulada amarillenta
+            roughness: 0.38,
+            metalness: 0.04,
+            clearcoat: 0.68,
+            clearcoatRoughness: 0.22,
           });
 
           this.pancreasMesh.traverse((c) => {
             if ((c as THREE.Mesh).isMesh) {
               const mesh = c as THREE.Mesh;
+              mesh.castShadow = true;
+              mesh.receiveShadow = true;
               mesh.material = mat.clone();
               this.endocrineMaterials.push(mesh.material as THREE.MeshStandardMaterial);
               mesh.userData = {
                 systemId: 'endocrine',
-                structureId: 'pancreas',
-                structureName: 'Páncreas Endocrino (Islotes de Langerhans)',
+                structureId: 'endocrine_pancreas',
+                structureName: 'Páncreas (Islotes de Langerhans: Insulina y Glucagón)',
                 selectable: true,
               };
             }
@@ -116,15 +128,15 @@ export class EndocrineSystem {
           const center = new THREE.Vector3();
           box.getCenter(center);
 
-          const targetLength = 0.14;
-          const scale = targetLength / (size.x || 1);
+          const targetSize = 0.14;
+          const scale = targetSize / (size.x || 1);
           this.pancreasMesh.scale.setScalar(scale);
 
-          // Retroperitoneal: Y ~ 1.15m, X ~ -0.01m, Z ~ -0.01m
+          // Retroperitoneal, detrás del estómago a nivel L1-L2
           this.pancreasMesh.position.set(
             -center.x * scale - 0.01,
-            -center.y * scale + 1.14,
-            -center.z * scale - 0.01
+            -center.y * scale + 1.135,
+            -center.z * scale + 0.01
           );
 
           this.group.add(this.pancreasMesh);
@@ -140,64 +152,114 @@ export class EndocrineSystem {
     return this.group;
   }
 
+  /**
+   * Glándula tiroides, hipófisis y glándulas suprarrenales anatómicas
+   */
   private buildThyroidPituitaryAndAdrenals(): void {
-    const glandMat = new THREE.MeshStandardMaterial({
-      color: 0xc084fc,
-      roughness: 0.35,
-      metalness: 0.1,
+    const thyroidMat = new THREE.MeshStandardMaterial({
+      color: 0x8f3c39, // Muy vascularizada, pardo-rojiza
+      roughness: 0.32,
+      metalness: 0.05,
+      clearcoat: 0.75,
+      clearcoatRoughness: 0.2,
     });
+    this.endocrineMaterials.push(thyroidMat);
 
-    // 1. Thyroid Gland (H-shaped in front of trachea C5-T1)
-    const thyroidGeo = new THREE.TorusGeometry(0.018, 0.007, 12, 16, Math.PI);
-    this.thyroidMesh = new THREE.Mesh(thyroidGeo, glandMat);
-    this.thyroidMesh.rotation.z = Math.PI;
-    this.thyroidMesh.position.set(0, 1.48, 0.026);
-    this.thyroidMesh.userData = {
-      systemId: 'endocrine',
-      structureId: 'thymus',
-      structureName: 'Glándula Tiroides',
-      selectable: true,
-    };
-    this.endocrineMaterials.push(glandMat);
-    this.group.add(this.thyroidMesh);
+    // 1. Glándula Tiroides (Forma de mariposa o H abrazando la tráquea en C5-T1)
+    const thyroidGroup = new THREE.Group();
+    thyroidGroup.name = 'Thyroid_Gland';
 
-    // 2. Pituitary Gland (Hipófisis en la silla turca del esfenoides)
-    const pitGeo = new THREE.SphereGeometry(0.006, 12, 12);
-    this.pituitaryMesh = new THREE.Mesh(pitGeo, glandMat);
-    this.pituitaryMesh.position.set(0, 1.66, 0.01);
+    // Lóbulo Derecho
+    const lobeGeo = new THREE.SphereGeometry(0.016, 16, 16);
+    lobeGeo.scale(0.8, 1.8, 0.9);
+    const rightLobe = new THREE.Mesh(lobeGeo, thyroidMat);
+    rightLobe.position.set(0.016, 0, 0);
+    rightLobe.rotation.z = -0.15;
+    thyroidGroup.add(rightLobe);
+
+    // Lóbulo Izquierdo
+    const leftLobe = new THREE.Mesh(lobeGeo, thyroidMat);
+    leftLobe.position.set(-0.016, 0, 0);
+    leftLobe.rotation.z = 0.15;
+    thyroidGroup.add(leftLobe);
+
+    // Istmo tiroideo
+    const isthmusGeo = new THREE.CylinderGeometry(0.007, 0.007, 0.024, 12);
+    const isthmus = new THREE.Mesh(isthmusGeo, thyroidMat);
+    isthmus.rotation.z = Math.PI / 2;
+    isthmus.position.set(0, -0.008, 0.006);
+    thyroidGroup.add(isthmus);
+
+    thyroidGroup.position.set(0, 1.485, 0.018);
+    thyroidGroup.traverse((c) => {
+      if ((c as THREE.Mesh).isMesh) {
+        c.userData = {
+          systemId: 'endocrine',
+          structureId: 'thyroid',
+          structureName: 'Glándula Tiroides e Istmo (Hormonas T3, T4 y Calcitonina)',
+          selectable: true,
+        };
+      }
+    });
+    this.thyroidMesh = thyroidGroup as any;
+    this.group.add(thyroidGroup);
+
+    // 2. Hipófisis / Glándula Pituitaria (Silla turca en la base del cráneo)
+    const pitMat = new THREE.MeshStandardMaterial({
+      color: 0xa45a7c, // Neuroendocrino
+      roughness: 0.35,
+      metalness: 0.04,
+      clearcoat: 0.65,
+    });
+    this.endocrineMaterials.push(pitMat);
+
+    const pitGeo = new THREE.SphereGeometry(0.008, 16, 16);
+    pitGeo.scale(1.2, 0.9, 1.0);
+    this.pituitaryMesh = new THREE.Mesh(pitGeo, pitMat);
+    this.pituitaryMesh.position.set(0, 1.61, -0.012);
     this.pituitaryMesh.userData = {
       systemId: 'endocrine',
-      structureId: 'brain',
-      structureName: 'Glándula Hipófisis (Pituitaria)',
+      structureId: 'pituitary',
+      structureName: 'Hipófisis / Pituitaria (Adenohipófisis y Neurohipófisis)',
       selectable: true,
     };
     this.group.add(this.pituitaryMesh);
 
-    // 3. Adrenal Glands (Suprarenales: capuchón piramidal sobre cada riñón)
+    // 3. Glándulas Suprarrenales (Polos superiores de ambos riñones)
     const adrenalMat = new THREE.MeshStandardMaterial({
-      color: 0xf59e0b,
-      roughness: 0.4,
+      color: 0xc89f3b, // Amarillo dorado ocre glandular
+      roughness: 0.36,
+      metalness: 0.04,
+      clearcoat: 0.62,
     });
-    const rAdrenal = new THREE.Mesh(new THREE.ConeGeometry(0.012, 0.015, 8), adrenalMat);
-    rAdrenal.position.set(0.045, 1.16, -0.025);
-    rAdrenal.userData = {
+    this.endocrineMaterials.push(adrenalMat);
+
+    const adrenalGeo = new THREE.ConeGeometry(0.018, 0.024, 16);
+    adrenalGeo.scale(1.3, 1.0, 0.8);
+
+    // Suprarrenal Izquierda (semilunar)
+    const leftAdrenal = new THREE.Mesh(adrenalGeo, adrenalMat);
+    leftAdrenal.position.set(-0.045, 1.19, -0.025);
+    leftAdrenal.rotation.z = -0.2;
+    leftAdrenal.userData = {
       systemId: 'endocrine',
-      structureId: 'kidneys',
-      structureName: 'Glándula Suprarrenal Derecha (Corteza y Médula)',
+      structureId: 'adrenals',
+      structureName: 'Glándula Suprarrenal Izquierda (Corteza: Cortisol/Aldosterona; Médula: Adrenalina)',
       selectable: true,
     };
+    this.adrenalsGroup.add(leftAdrenal);
 
-    const lAdrenal = new THREE.Mesh(new THREE.ConeGeometry(0.012, 0.015, 8), adrenalMat);
-    lAdrenal.position.set(-0.045, 1.18, -0.025);
-    lAdrenal.userData = {
+    // Suprarrenal Derecha (piramidal)
+    const rightAdrenal = new THREE.Mesh(adrenalGeo, adrenalMat);
+    rightAdrenal.position.set(0.045, 1.175, -0.025);
+    rightAdrenal.rotation.z = 0.2;
+    rightAdrenal.userData = {
       systemId: 'endocrine',
-      structureId: 'kidneys',
-      structureName: 'Glándula Suprarrenal Izquierda (Corteza y Médula)',
+      structureId: 'adrenals',
+      structureName: 'Glándula Suprarrenal Derecha (Corteza y Médula Suprarrenal)',
       selectable: true,
     };
-
-    this.adrenalsGroup.add(rAdrenal);
-    this.adrenalsGroup.add(lAdrenal);
+    this.adrenalsGroup.add(rightAdrenal);
   }
 
   public setVisible(visible: boolean): void {
@@ -208,7 +270,7 @@ export class EndocrineSystem {
     this.endocrineMaterials.forEach((mat) => {
       if (active) {
         mat.emissive = new THREE.Color(colorHex);
-        mat.emissiveIntensity = 0.55;
+        mat.emissiveIntensity = 0.5;
       } else {
         mat.emissive = new THREE.Color(0x000000);
         mat.emissiveIntensity = 0;
@@ -217,6 +279,6 @@ export class EndocrineSystem {
   }
 
   public setExploded(offset: number): void {
-    this.group.position.set(0, offset * 0.08, offset * 0.15);
+    this.group.position.set(0, offset * 0.06, offset * 0.1);
   }
 }

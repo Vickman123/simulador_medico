@@ -1,6 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Orquestador Central del Cuerpo Humano (Human Body Master Model)
+ * Integra los 8 sistemas anatómicos y silueta humana de cristal traslúcida
  * PC PUMA – UNAM
  */
 
@@ -15,6 +16,7 @@ import { RespiratorySystem } from './systems/respiratory.js';
 import { UrinarySystem } from './systems/urinary.js';
 import { EndocrineSystem } from './systems/endocrine.js';
 import { AnatomicalSystemId, ANATOMICAL_SYSTEMS } from './catalog.js';
+import { resolveModelUrl } from '../core/assetHelper.js';
 
 export class HumanBody {
   public readonly group: THREE.Group;
@@ -28,6 +30,10 @@ export class HumanBody {
   public readonly respiratory: RespiratorySystem;
   public readonly urinary: UrinarySystem;
   public readonly endocrine: EndocrineSystem;
+
+  public skinGroup: THREE.Group | null = null;
+  private isSkinVisible: boolean = false;
+  private skinMaterial: THREE.MeshPhysicalMaterial | null = null;
 
   private loader: GLTFLoader;
   private systemStates: Record<AnatomicalSystemId, boolean> = {
@@ -58,7 +64,7 @@ export class HumanBody {
 
     this.loader = new GLTFLoader();
 
-    // Instantiate all 8 anatomical systems
+    // Instanciar los 8 sistemas anatómicos
     this.skeletal = new SkeletalSystem();
     this.muscular = new MuscularSystem();
     this.circulatory = new CirculatorySystem();
@@ -81,7 +87,7 @@ export class HumanBody {
   }
 
   private buildLaboratoryPedestal(): void {
-    // 1. Primary metallic podium platform
+    // 1. Podio circular metálico futurista
     const platformGeo = new THREE.CylinderGeometry(0.85, 0.95, 0.08, 48);
     const platformMat = new THREE.MeshStandardMaterial({
       color: 0x081120,
@@ -93,7 +99,7 @@ export class HumanBody {
     platform.receiveShadow = true;
     this.pedestalGroup.add(platform);
 
-    // 2. Cyan luminous holographic energy ring
+    // 2. Anillo de energía holográfico cian
     const ringGeo = new THREE.RingGeometry(0.72, 0.77, 64);
     const ringMat = new THREE.MeshBasicMaterial({
       color: 0x00f0ff,
@@ -106,7 +112,7 @@ export class HumanBody {
     this.pedestalRing.position.y = 0.003;
     this.pedestalGroup.add(this.pedestalRing);
 
-    // 3. Inner UNAM gold accent ring
+    // 3. Anillo dorado conmemorativo UNAM
     const goldRingGeo = new THREE.RingGeometry(0.64, 0.66, 48);
     const goldRingMat = new THREE.MeshBasicMaterial({
       color: 0xd97706,
@@ -119,7 +125,7 @@ export class HumanBody {
     goldRing.position.y = 0.004;
     this.pedestalGroup.add(goldRing);
 
-    // 4. Subtle upward projector light
+    // 4. Luz de proyección vertical
     this.haloLight = new THREE.PointLight(0x00f0ff, 1.2, 3.5);
     this.haloLight.position.set(0, 0.1, 0);
     this.pedestalGroup.add(this.haloLight);
@@ -138,16 +144,102 @@ export class HumanBody {
     ];
 
     let completed = 0;
+    const totalSteps = systemsToLoad.length + 1; // +1 por la silueta de cristal
+
     for (const item of systemsToLoad) {
-      if (onProgress) onProgress(item.name, completed / systemsToLoad.length);
+      if (onProgress) onProgress(item.name, completed / totalSteps);
       try {
         await item.sys.load(this.loader);
       } catch (err) {
-        console.warn(`[HumanBody] Error loading ${item.name}:`, err);
+        console.warn(`[HumanBody] Error cargando ${item.name}:`, err);
       }
       completed++;
-      if (onProgress) onProgress(item.name, completed / systemsToLoad.length);
+      if (onProgress) onProgress(item.name, completed / totalSteps);
     }
+
+    // Cargar silueta humana de piel holográfica / cristal
+    try {
+      if (onProgress) onProgress('Silueta Holográfica Corporal', completed / totalSteps);
+      await this.loadSkinSilhouette();
+    } catch (err) {
+      console.warn('[HumanBody] No se pudo cargar la silueta de piel:', err);
+    }
+  }
+
+  /**
+   * Carga la silueta corporal de cristal / holograma médico (skin.glb)
+   */
+  private async loadSkinSilhouette(): Promise<void> {
+    return new Promise((resolve) => {
+      this.loader.load(
+        resolveModelUrl('models/skin.glb'),
+        (gltf) => {
+          this.skinGroup = gltf.scene;
+          this.skinGroup.name = 'Holographic_Skin_Silhouette';
+
+          // Shader PBR de vidrio/holograma biomédico traslúcido
+          this.skinMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0x38bdf8, // Azul cian holográfico
+            roughness: 0.22,
+            metalness: 0.05,
+            transmission: 0.7,
+            transparent: true,
+            opacity: 0.14,
+            depthWrite: false, // Permite ver los órganos y huesos internos con nitidez
+            side: THREE.DoubleSide,
+          });
+
+          this.skinGroup.traverse((child) => {
+            if ((child as THREE.Mesh).isMesh) {
+              const mesh = child as THREE.Mesh;
+              mesh.material = this.skinMaterial!;
+              mesh.userData = {
+                systemId: null,
+                structureId: 'skin',
+                structureName: 'Silueta Humana (Piel Translúcida de Cristal)',
+                selectable: false,
+              };
+            }
+          });
+
+          // Escala: 1.75 / 1.8295 = 0.95655
+          const scale = 1.75 / 1.8295;
+          this.skinGroup.scale.setScalar(scale);
+          this.skinGroup.position.set(0, 0.875, 0);
+
+          // Inicialmente oculta o visible según configuración
+          this.skinGroup.visible = this.isSkinVisible;
+
+          this.group.add(this.skinGroup);
+          console.log('[HumanBody] Silueta corporal de piel holográfica cargada correctamente.');
+          resolve();
+        },
+        undefined,
+        (err) => {
+          console.warn('[HumanBody] Error al cargar skin.glb:', err);
+          resolve();
+        }
+      );
+    });
+  }
+
+  public toggleSkin(): boolean {
+    this.isSkinVisible = !this.isSkinVisible;
+    if (this.skinGroup) {
+      this.skinGroup.visible = this.isSkinVisible;
+    }
+    return this.isSkinVisible;
+  }
+
+  public setSkinVisible(visible: boolean): void {
+    this.isSkinVisible = visible;
+    if (this.skinGroup) {
+      this.skinGroup.visible = visible;
+    }
+  }
+
+  public isSkinSilhouetteVisible(): boolean {
+    return this.isSkinVisible;
   }
 
   public setSystemVisibility(systemId: AnatomicalSystemId, visible: boolean): void {
@@ -215,7 +307,7 @@ export class HumanBody {
   public isolateStructure(structureId: string): void {
     this.isolatedStructureId = structureId;
 
-    // Dim or hide other non-matching objects
+    // Atenuar el resto de estructuras
     this.group.traverse((child) => {
       if ((child as THREE.Mesh).isMesh && child.userData && child.userData.structureId) {
         const mesh = child as THREE.Mesh;
@@ -239,7 +331,6 @@ export class HumanBody {
   public resetIsolation(): void {
     this.isolatedStructureId = null;
 
-    // Restore opacities according to active systems
     this.group.traverse((child) => {
       if ((child as THREE.Mesh).isMesh && child.userData && child.userData.systemId) {
         const mesh = child as THREE.Mesh;
@@ -250,7 +341,6 @@ export class HumanBody {
       }
     });
 
-    // Reapply current system visibility
     (Object.keys(this.systemStates) as AnatomicalSystemId[]).forEach((id) => {
       this.setSystemVisibility(id, this.systemStates[id]);
     });
@@ -264,7 +354,6 @@ export class HumanBody {
     const list: THREE.Object3D[] = [];
     this.group.traverse((child) => {
       if ((child as THREE.Mesh).isMesh && child.userData && child.userData.selectable) {
-        // Only include if its parent system is currently visible
         const sysId = child.userData.systemId as AnatomicalSystemId;
         if (!sysId || this.systemStates[sysId]) {
           list.push(child);
@@ -275,7 +364,7 @@ export class HumanBody {
   }
 
   public update(delta: number, elapsed: number): void {
-    // 1. Smoothly interpolate exploded layer positions
+    // 1. Suave interpolación de capas en vista estallada
     if (Math.abs(this.explodeFactor - this.targetExplodeFactor) > 0.001) {
       this.explodeFactor += (this.targetExplodeFactor - this.explodeFactor) * (delta * 6.0);
       this.skeletal.setExploded(this.explodeFactor);
@@ -288,7 +377,7 @@ export class HumanBody {
       this.endocrine.setExploded(this.explodeFactor);
     }
 
-    // 2. Rotate futuristic pedestal ring
+    // 2. Rotación del anillo podio futurista
     if (this.pedestalRing) {
       this.pedestalRing.rotation.z = elapsed * 0.15;
     }

@@ -1,6 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Módulo: Sistema Respiratorio (Systema respiratorium)
+ * Pulmones anatómicos NIH HRA con textura parenquimatosa y tráquea
  * PC PUMA – UNAM
  */
 
@@ -36,12 +37,15 @@ export class RespiratorySystem {
           this.lungsMesh = gltf.scene;
           this.lungsMesh.name = 'Anatomical_Lungs';
 
+          // Shader PBR de parénquima pulmonar realista (Rosa malva esponjoso y ligeramente translúcido)
           const lungMat = new THREE.MeshStandardMaterial({
-            color: 0x67e8f9,
-            roughness: 0.5,
-            metalness: 0.05,
+            color: 0xbe6e7b, // Rosa grisáceo anatómico
+            roughness: 0.52,
+            metalness: 0.04,
+            clearcoat: 0.35,
+            clearcoatRoughness: 0.3,
             transparent: true,
-            opacity: 0.92,
+            opacity: 0.94,
           });
 
           this.lungsMesh.traverse((child) => {
@@ -66,15 +70,17 @@ export class RespiratorySystem {
           const center = new THREE.Vector3();
           box.getCenter(center);
 
+          // Dimensiones de pulmones adultos dentro de la caja torácica (~24cm alto)
           const targetHeight = 0.24;
           const scale = targetHeight / (size.y || 1);
           this.lungsMesh.scale.setScalar(scale);
           this.lungsBaseScale.setScalar(scale);
 
+          // Centrado exacto en la cavidad torácica
           this.lungsMesh.position.set(
             -center.x * scale,
-            -center.y * scale + 1.33,
-            -center.z * scale + 0.01
+            -center.y * scale + 1.30,
+            -center.z * scale + 0.005
           );
 
           this.group.add(this.lungsMesh);
@@ -85,7 +91,7 @@ export class RespiratorySystem {
           if (xhr.total > 0 && onProgress) onProgress(xhr.loaded / xhr.total);
         },
         (err) => {
-          console.warn('[RespiratorySystem] Fallback to procedural lungs:', err);
+          console.warn('[RespiratorySystem] Fallback a pulmones procedimentales:', err);
           this.buildProceduralLungs();
           this.isLoaded = true;
           resolve(this.group);
@@ -96,58 +102,50 @@ export class RespiratorySystem {
 
   private buildTracheaAndBronchi(): void {
     const cartilageMat = new THREE.MeshStandardMaterial({
-      color: 0xe0f2fe,
-      roughness: 0.4,
-      metalness: 0.1,
+      color: 0xe0e7ff,
+      roughness: 0.35,
+      metalness: 0.08,
+      clearcoat: 0.4,
     });
 
-    // Trachea (C6 to T4/T5 carina)
-    const tracheaGeo = new THREE.CylinderGeometry(0.012, 0.012, 0.12, 16);
+    // Tráquea (de C6 a carina en T4/T5)
+    const tracheaGeo = new THREE.CylinderGeometry(0.011, 0.011, 0.11, 16);
     const trachea = new THREE.Mesh(tracheaGeo, cartilageMat);
-    trachea.position.set(0, 1.46, 0.02);
+    trachea.position.set(0, 1.44, 0.015);
     trachea.userData = {
       systemId: 'respiratory',
       structureId: 'lungs',
-      structureName: 'Tráquea',
+      structureName: 'Tráquea Cartilaginosa',
       selectable: true,
     };
     this.tracheaGroup.add(trachea);
 
-    // Right & Left Main Bronchus branching at carina
+    // Bronquios principales derecho e izquierdo
     const rBronchusCurve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0, 1.40, 0.02),
-      new THREE.Vector3(0.025, 1.37, 0.01),
-      new THREE.Vector3(0.05, 1.34, 0.0),
+      new THREE.Vector3(0, 1.38, 0.015),
+      new THREE.Vector3(0.024, 1.35, 0.005),
+      new THREE.Vector3(0.048, 1.32, -0.005),
     ]);
     const lBronchusCurve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0, 1.40, 0.02),
-      new THREE.Vector3(-0.03, 1.37, 0.01),
-      new THREE.Vector3(-0.055, 1.34, 0.0),
+      new THREE.Vector3(0, 1.38, 0.015),
+      new THREE.Vector3(-0.028, 1.35, 0.005),
+      new THREE.Vector3(-0.052, 1.32, -0.005),
     ]);
-    this.tracheaGroup.add(new THREE.Mesh(new THREE.TubeGeometry(rBronchusCurve, 12, 0.007, 8, false), cartilageMat));
-    this.tracheaGroup.add(new THREE.Mesh(new THREE.TubeGeometry(lBronchusCurve, 12, 0.007, 8, false), cartilageMat));
+    this.tracheaGroup.add(new THREE.Mesh(new THREE.TubeGeometry(rBronchusCurve, 12, 0.006, 8, false), cartilageMat));
+    this.tracheaGroup.add(new THREE.Mesh(new THREE.TubeGeometry(lBronchusCurve, 12, 0.006, 8, false), cartilageMat));
   }
 
   private buildProceduralLungs(): void {
     const lungsGroup = new THREE.Group();
-    lungsGroup.name = 'Procedural_Lungs';
-    const mat = new THREE.MeshStandardMaterial({
-      color: 0x38bdf8,
-      roughness: 0.5,
-      transparent: true,
-      opacity: 0.88,
-    });
-
-    const rLung = new THREE.Mesh(new THREE.SphereGeometry(0.08, 20, 20), mat);
+    const mat = new THREE.MeshStandardMaterial({ color: 0xbe6e7b, roughness: 0.5, clearcoat: 0.3 });
+    const rLung = new THREE.Mesh(new THREE.SphereGeometry(0.075, 20, 20), mat);
     rLung.scale.set(0.9, 1.4, 0.8);
-    rLung.position.set(0.07, 1.33, 0.01);
-    rLung.userData = { systemId: 'respiratory', structureId: 'lungs', structureName: 'Pulmón Derecho (3 Lóbulos)', selectable: true };
+    rLung.position.set(0.065, 1.30, 0.005);
     lungsGroup.add(rLung);
 
-    const lLung = new THREE.Mesh(new THREE.SphereGeometry(0.075, 20, 20), mat);
+    const lLung = new THREE.Mesh(new THREE.SphereGeometry(0.07, 20, 20), mat);
     lLung.scale.set(0.85, 1.35, 0.75);
-    lLung.position.set(-0.07, 1.33, 0.01);
-    lLung.userData = { systemId: 'respiratory', structureId: 'lungs', structureName: 'Pulmón Izquierdo (2 Lóbulos)', selectable: true };
+    lLung.position.set(-0.065, 1.30, 0.005);
     lungsGroup.add(lLung);
 
     this.group.add(lungsGroup);
@@ -181,7 +179,6 @@ export class RespiratorySystem {
   }
 
   public setExploded(offset: number): void {
-    // Moves slightly forward
     this.group.position.z = offset * 0.22;
   }
 }

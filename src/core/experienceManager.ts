@@ -136,6 +136,11 @@ export class ExperienceManager {
         this.playUiClickSound();
         return isExploded;
       },
+      onToggleSkin: () => {
+        const isSkin = this.humanBody.toggleSkin();
+        this.playUiClickSound();
+        return isSkin;
+      },
       onTogglePhysiology: () => {
         this.isPhysiologyActive = !this.isPhysiologyActive;
         this.cardiacAnim.isEnabled = this.isPhysiologyActive;

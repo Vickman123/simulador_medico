@@ -6,6 +6,7 @@
 
 export interface ControlsCallbacks {
   onToggleExploded?: () => boolean;
+  onToggleSkin?: () => boolean;
   onTogglePhysiology?: () => boolean;
   onOpenQuiz?: () => void;
   onResetView?: () => void;
@@ -29,15 +30,19 @@ export class ControlsUI {
 
   private render(): void {
     this.container.innerHTML = `
-      <button class="control-btn" id="btn-toggle-exploded">
-        <span>✨</span> Vista Desglosada (Capas)
+      <button class="control-btn" id="btn-toggle-exploded" title="Separar los sistemas anatómicos en capas espaciales">
+        <span>✨</span> Vista Desglosada
       </button>
 
-      <button class="control-btn active" id="btn-toggle-physiology">
+      <button class="control-btn" id="btn-toggle-skin" title="Mostrar u ocultar la silueta humana de cristal">
+        <span>👤</span> Silueta Cristal
+      </button>
+
+      <button class="control-btn active" id="btn-toggle-physiology" title="Activar/Pausar animaciones fisiológicas de latido, respiración y peristalsis">
         <span>💓</span> Simulación Fisiológica
       </button>
 
-      <button class="control-btn btn-quiz" id="btn-open-quiz">
+      <button class="control-btn btn-quiz" id="btn-open-quiz" title="Evaluación Anatómica interactiva UNAM">
         <span>📝</span> Evaluación UNAM
       </button>
 
@@ -72,6 +77,15 @@ export class ControlsUI {
       if (this.callbacks.onToggleExploded) {
         const isExploded = this.callbacks.onToggleExploded();
         explodedBtn.classList.toggle('active', isExploded);
+      }
+    });
+
+    // Skin Silhouette Toggle
+    const skinBtn = this.container.querySelector('#btn-toggle-skin') as HTMLElement;
+    skinBtn.addEventListener('click', () => {
+      if (this.callbacks.onToggleSkin) {
+        const isSkin = this.callbacks.onToggleSkin();
+        skinBtn.classList.toggle('active', isSkin);
       }
     });
 

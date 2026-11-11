@@ -1,6 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Módulo: Sistema Nervioso (Systema nervosum)
+ * Encéfalo Allen Reference Atlas en cavidad craneal, médula y red periférica
  * PC PUMA – UNAM
  */
 
@@ -36,10 +37,13 @@ export class NervousSystem {
           this.brainMesh = gltf.scene;
           this.brainMesh.name = 'Anatomical_Brain';
 
+          // Color y textura de sustancia gris/corteza cerebral real (Gris rosáceo con piamadre húmeda)
           const brainMat = new THREE.MeshStandardMaterial({
-            color: 0x9333ea,
-            roughness: 0.35,
-            metalness: 0.1,
+            color: 0xc4a494, // Gris rosáceo parenquimatoso real (no morado artificial)
+            roughness: 0.38,
+            metalness: 0.04,
+            clearcoat: 0.55, // Líquido cefalorraquídeo y piamadre
+            clearcoatRoughness: 0.2,
           });
 
           this.brainMesh.traverse((child) => {
@@ -52,7 +56,7 @@ export class NervousSystem {
               mesh.userData = {
                 systemId: 'nervous',
                 structureId: 'brain',
-                structureName: 'Encéfalo (Cerebro, Cerebelo y Tronco)',
+                structureName: 'Encéfalo (Corteza, Tronco y Cerebelo)',
                 selectable: true,
               };
             }
@@ -64,15 +68,16 @@ export class NervousSystem {
           const center = new THREE.Vector3();
           box.getCenter(center);
 
-          const targetSize = 0.14;
+          // Ajuste de escala para alojarse dentro de la cavidad craneal del esqueleto (~14cm)
+          const targetSize = 0.138;
           const scale = targetSize / (size.y || 1);
           this.brainMesh.scale.setScalar(scale);
 
-          // Center inside cranial vault: Y ~ 1.68m
+          // Alojado perfectamente dentro de la fosa craneal
           this.brainMesh.position.set(
             -center.x * scale,
-            -center.y * scale + 1.68,
-            -center.z * scale - 0.005
+            -center.y * scale + 1.635,
+            -center.z * scale - 0.018
           );
 
           this.group.add(this.brainMesh);
@@ -80,7 +85,7 @@ export class NervousSystem {
         },
         undefined,
         (err) => {
-          console.warn('[NervousSystem] Fallback to procedural brain:', err);
+          console.warn('[NervousSystem] Fallback a encéfalo procedimental:', err);
           this.buildProceduralBrain();
           resolve();
         }
@@ -95,9 +100,10 @@ export class NervousSystem {
           this.spinalMesh.name = 'Anatomical_SpinalCord';
 
           const spineMat = new THREE.MeshStandardMaterial({
-            color: 0x38bdf8,
-            roughness: 0.3,
-            metalness: 0.1,
+            color: 0xfef08a, // Blanco amarillento mielínico
+            roughness: 0.35,
+            metalness: 0.05,
+            clearcoat: 0.4,
           });
 
           this.spinalMesh.traverse((child) => {
@@ -120,14 +126,15 @@ export class NervousSystem {
           const center = new THREE.Vector3();
           box.getCenter(center);
 
-          const targetHeight = 0.55;
+          const targetHeight = 0.50;
           const scale = targetHeight / (size.y || 1);
           this.spinalMesh.scale.setScalar(scale);
 
+          // Alojada dentro del conducto raquídeo vertebral
           this.spinalMesh.position.set(
             -center.x * scale,
-            -center.y * scale + 1.35,
-            -center.z * scale - 0.03
+            -center.y * scale + 1.32,
+            -center.z * scale - 0.028
           );
 
           this.group.add(this.spinalMesh);
@@ -135,7 +142,7 @@ export class NervousSystem {
         },
         undefined,
         (err) => {
-          console.warn('[NervousSystem] Fallback to procedural spinal cord:', err);
+          console.warn('[NervousSystem] Fallback a médula procedimental:', err);
           this.buildProceduralSpinalCord();
           resolve();
         }
@@ -149,78 +156,62 @@ export class NervousSystem {
 
   private buildPeripheralNerves(): void {
     const nerveMat = new THREE.MeshStandardMaterial({
-      color: 0x38bdf8,
-      roughness: 0.3,
+      color: 0xfef08a, // Mielina
+      roughness: 0.35,
       emissive: 0x0284c7,
-      emissiveIntensity: 0.25,
+      emissiveIntensity: 0.18,
     });
 
-    // 1. Brachial Plexus to Right & Left Arms
+    // Plexos braquiales a miembros superiores
     const rBrachial = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0.015, 1.48, -0.02),
-      new THREE.Vector3(0.08, 1.45, -0.01),
-      new THREE.Vector3(0.18, 1.38, 0.0),
-      new THREE.Vector3(0.28, 1.25, 0.0), // Radial/Median nerve
-      new THREE.Vector3(0.35, 1.05, 0.0),
+      new THREE.Vector3(0.015, 1.45, -0.02),
+      new THREE.Vector3(0.08, 1.42, -0.01),
+      new THREE.Vector3(0.18, 1.34, 0.0),
+      new THREE.Vector3(0.28, 1.20, 0.0),
+      new THREE.Vector3(0.35, 1.02, 0.0),
     ]);
     const lBrachial = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(-0.015, 1.48, -0.02),
-      new THREE.Vector3(-0.08, 1.45, -0.01),
-      new THREE.Vector3(-0.18, 1.38, 0.0),
-      new THREE.Vector3(-0.28, 1.25, 0.0),
-      new THREE.Vector3(-0.35, 1.05, 0.0),
+      new THREE.Vector3(-0.015, 1.45, -0.02),
+      new THREE.Vector3(-0.08, 1.42, -0.01),
+      new THREE.Vector3(-0.18, 1.34, 0.0),
+      new THREE.Vector3(-0.28, 1.20, 0.0),
+      new THREE.Vector3(-0.35, 1.02, 0.0),
     ]);
-    this.peripheralGroup.add(new THREE.Mesh(new THREE.TubeGeometry(rBrachial, 20, 0.0035, 8, false), nerveMat));
-    this.peripheralGroup.add(new THREE.Mesh(new THREE.TubeGeometry(lBrachial, 20, 0.0035, 8, false), nerveMat));
+    this.peripheralGroup.add(new THREE.Mesh(new THREE.TubeGeometry(rBrachial, 20, 0.003, 8, false), nerveMat));
+    this.peripheralGroup.add(new THREE.Mesh(new THREE.TubeGeometry(lBrachial, 20, 0.003, 8, false), nerveMat));
 
-    // 2. Lumbosacral Plexus & Sciatic Nerve to Lower Limbs
+    // Nervios ciáticos a miembros inferiores
     const rSciatic = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0.015, 1.05, -0.025),
-      new THREE.Vector3(0.045, 0.95, -0.02),
-      new THREE.Vector3(0.07, 0.85, -0.01),
-      new THREE.Vector3(0.08, 0.65, -0.01), // Sciatic trunk
-      new THREE.Vector3(0.075, 0.45, -0.01), // Tibial nerve
+      new THREE.Vector3(0.015, 1.02, -0.025),
+      new THREE.Vector3(0.045, 0.92, -0.02),
+      new THREE.Vector3(0.068, 0.82, -0.01),
+      new THREE.Vector3(0.075, 0.62, -0.01),
+      new THREE.Vector3(0.07, 0.42, -0.01),
     ]);
     const lSciatic = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(-0.015, 1.05, -0.025),
-      new THREE.Vector3(-0.045, 0.95, -0.02),
-      new THREE.Vector3(-0.07, 0.85, -0.01),
-      new THREE.Vector3(-0.08, 0.65, -0.01),
-      new THREE.Vector3(-0.075, 0.45, -0.01),
+      new THREE.Vector3(-0.015, 1.02, -0.025),
+      new THREE.Vector3(-0.045, 0.92, -0.02),
+      new THREE.Vector3(-0.068, 0.82, -0.01),
+      new THREE.Vector3(-0.075, 0.62, -0.01),
+      new THREE.Vector3(-0.07, 0.42, -0.01),
     ]);
-    this.peripheralGroup.add(new THREE.Mesh(new THREE.TubeGeometry(rSciatic, 24, 0.004, 8, false), nerveMat));
-    this.peripheralGroup.add(new THREE.Mesh(new THREE.TubeGeometry(lSciatic, 24, 0.004, 8, false), nerveMat));
+    this.peripheralGroup.add(new THREE.Mesh(new THREE.TubeGeometry(rSciatic, 24, 0.0035, 8, false), nerveMat));
+    this.peripheralGroup.add(new THREE.Mesh(new THREE.TubeGeometry(lSciatic, 24, 0.0035, 8, false), nerveMat));
   }
 
   private buildProceduralBrain(): void {
-    const mat = new THREE.MeshStandardMaterial({ color: 0x9333ea, roughness: 0.35 });
-    const brain = new THREE.Mesh(new THREE.SphereGeometry(0.075, 20, 20), mat);
+    const mat = new THREE.MeshStandardMaterial({ color: 0xc4a494, roughness: 0.4, clearcoat: 0.5 });
+    const brain = new THREE.Mesh(new THREE.SphereGeometry(0.07, 24, 24), mat);
     brain.scale.set(1.0, 0.9, 1.2);
-    brain.position.set(0, 1.68, -0.005);
-    brain.userData = {
-      systemId: 'nervous',
-      structureId: 'brain',
-      structureName: 'Encéfalo',
-      selectable: true,
-    };
+    brain.position.set(0, 1.635, -0.018);
     this.group.add(brain);
-    this.brainMesh = new THREE.Group();
-    this.brainMesh.add(brain);
   }
 
   private buildProceduralSpinalCord(): void {
-    const mat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.3 });
-    const spine = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.55, 12), mat);
-    spine.position.set(0, 1.35, -0.03);
-    spine.userData = {
-      systemId: 'nervous',
-      structureId: 'spinal_cord',
-      structureName: 'Médula Espinal',
-      selectable: true,
-    };
+    const mat = new THREE.MeshStandardMaterial({ color: 0xfef08a, roughness: 0.35 });
+    const spine = new THREE.Mesh(new THREE.CylinderGeometry(0.007, 0.007, 0.50, 12), mat);
+    spine.position.set(0, 1.32, -0.028);
     this.group.add(spine);
-    this.spinalMesh = new THREE.Group();
-    this.spinalMesh.add(spine);
   }
 
   public setVisible(visible: boolean): void {
@@ -234,13 +225,12 @@ export class NervousSystem {
         mat.emissiveIntensity = 0.65;
       } else {
         mat.emissive = new THREE.Color(0x0284c7);
-        mat.emissiveIntensity = 0.15;
+        mat.emissiveIntensity = 0.12;
       }
     });
   }
 
   public setExploded(offset: number): void {
-    // Moves backward and slightly upward
     this.group.position.set(0, offset * 0.1, -offset * 0.25);
   }
 }

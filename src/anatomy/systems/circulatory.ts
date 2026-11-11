@@ -1,6 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Módulo: Sistema Circulatorio (Systema cardiovasculare)
+ * Corazón anatómico NIH HRA con acabado seroso PBR y árbol vascular
  * PC PUMA – UNAM
  */
 
@@ -28,22 +29,21 @@ export class CirculatorySystem {
 
   public async load(loader: GLTFLoader, onProgress?: (percent: number) => void): Promise<THREE.Group> {
     return new Promise((resolve) => {
-      // 1. Build anatomical arterial and venous vascular network
       this.buildSystemicVasculature();
 
-      // 2. Load high-resolution anatomical Heart GLB
       loader.load(
         resolveModelUrl('models/heart.glb'),
         (gltf) => {
           this.heartMesh = gltf.scene;
           this.heartMesh.name = 'Anatomical_Heart';
 
+          // Shader PBR de tejido miocárdico húmedo con serosa brillante
           const heartMat = new THREE.MeshStandardMaterial({
-            color: 0xb91c1c,
-            roughness: 0.35,
-            metalness: 0.1,
-            clearcoat: 0.3,
-            clearcoatRoughness: 0.2,
+            color: 0x8b1e2a, // Rojo miocárdico profundo
+            roughness: 0.3,
+            metalness: 0.05,
+            clearcoat: 0.85, // Serosa pericárdica fresca
+            clearcoatRoughness: 0.18,
           });
 
           this.heartMesh.traverse((child) => {
@@ -56,30 +56,30 @@ export class CirculatorySystem {
               mesh.userData = {
                 systemId: 'circulatory',
                 structureId: 'heart',
-                structureName: 'Corazón (Miocardio)',
+                structureName: 'Corazón (Miocardio y Cavidades)',
                 selectable: true,
               };
             }
           });
 
-          // Normalize and place in thoracic cavity (Mediastinum)
+          // Dimensiones de corazón adulto: ~12cm alto x 9cm ancho
           const box = new THREE.Box3().setFromObject(this.heartMesh);
           const size = new THREE.Vector3();
           box.getSize(size);
           const center = new THREE.Vector3();
           box.getCenter(center);
 
-          // Real heart dimensions: approx 12cm length x 9cm width
-          const targetSize = 0.13;
+          const targetSize = 0.115;
           const scale = targetSize / (size.y || 1);
           this.heartMesh.scale.setScalar(scale);
           this.heartBaseScale.setScalar(scale);
 
-          // Center in mediastinum: Y ~ 1.30m, slightly to the left (X ~ -0.015), Z ~ 0.04
+          // Posición anatómica precisa en mediastino medio:
+          // Descansa sobre diafragma a nivel T8, inclinado a la izquierda
           this.heartMesh.position.set(
-            -center.x * scale - 0.012,
-            -center.y * scale + 1.30,
-            -center.z * scale + 0.035
+            -center.x * scale - 0.015,
+            -center.y * scale + 1.28,
+            -center.z * scale + 0.02
           );
 
           this.group.add(this.heartMesh);
@@ -90,7 +90,7 @@ export class CirculatorySystem {
           if (xhr.total > 0 && onProgress) onProgress(xhr.loaded / xhr.total);
         },
         (err) => {
-          console.warn('[CirculatorySystem] Fallback to procedural heart:', err);
+          console.warn('[CirculatorySystem] Fallback a corazón procedimental:', err);
           this.buildProceduralHeart();
           this.isLoaded = true;
           resolve(this.group);
@@ -101,44 +101,48 @@ export class CirculatorySystem {
 
   private buildSystemicVasculature(): void {
     const arteryMat = new THREE.MeshStandardMaterial({
-      color: 0xef4444,
-      roughness: 0.3,
-      metalness: 0.2,
+      color: 0xb91c1c,
+      roughness: 0.35,
+      metalness: 0.1,
+      clearcoat: 0.6,
+      clearcoatRoughness: 0.2,
     });
     const veinMat = new THREE.MeshStandardMaterial({
-      color: 0x2563eb,
-      roughness: 0.3,
-      metalness: 0.2,
+      color: 0x1d4ed8,
+      roughness: 0.35,
+      metalness: 0.1,
+      clearcoat: 0.6,
+      clearcoatRoughness: 0.2,
     });
 
-    // 1. Thoracic & Abdominal Aorta (Curved tube descending along spine)
+    // 1. Aorta ascendente, cayado y aorta descendente toracoabdominal
     const aortaCurve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(-0.01, 1.34, 0.03), // Aortic root
-      new THREE.Vector3(-0.01, 1.39, 0.01), // Arch apex
-      new THREE.Vector3(-0.02, 1.36, -0.02), // Descending start
-      new THREE.Vector3(-0.015, 1.22, -0.03), // Thoracic
-      new THREE.Vector3(-0.01, 1.05, -0.03), // Abdominal
-      new THREE.Vector3(0.0, 0.92, -0.02), // Iliac bifurcation
+      new THREE.Vector3(-0.012, 1.32, 0.02),
+      new THREE.Vector3(-0.012, 1.37, 0.01),
+      new THREE.Vector3(-0.018, 1.34, -0.02),
+      new THREE.Vector3(-0.015, 1.20, -0.025),
+      new THREE.Vector3(-0.01, 1.05, -0.025),
+      new THREE.Vector3(0.0, 0.90, -0.02),
     ]);
-    const aortaGeo = new THREE.TubeGeometry(aortaCurve, 32, 0.012, 12, false);
+    const aortaGeo = new THREE.TubeGeometry(aortaCurve, 32, 0.011, 12, false);
     const aortaMesh = new THREE.Mesh(aortaGeo, arteryMat);
     aortaMesh.userData = {
       systemId: 'circulatory',
       structureId: 'heart',
-      structureName: 'Aorta Ascendente y Abdominal',
+      structureName: 'Arteria Aorta Ascendente y Descendente',
       selectable: true,
     };
     this.vesselsGroup.add(aortaMesh);
 
-    // 2. Vena Cava (Superior & Inferior returning to right atrium)
+    // 2. Venas cavas superior e inferior
     const venaCavaCurve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0.02, 1.45, 0.01), // Jugular confluence
-      new THREE.Vector3(0.02, 1.34, 0.02), // Superior entry
-      new THREE.Vector3(0.015, 1.20, -0.02), // Inferior entry
-      new THREE.Vector3(0.015, 1.05, -0.02), // Abdominal cava
-      new THREE.Vector3(0.01, 0.92, -0.02), // Iliac confluence
+      new THREE.Vector3(0.018, 1.43, 0.01),
+      new THREE.Vector3(0.018, 1.32, 0.015),
+      new THREE.Vector3(0.014, 1.18, -0.018),
+      new THREE.Vector3(0.012, 1.05, -0.018),
+      new THREE.Vector3(0.008, 0.90, -0.018),
     ]);
-    const cavaGeo = new THREE.TubeGeometry(venaCavaCurve, 32, 0.013, 12, false);
+    const cavaGeo = new THREE.TubeGeometry(venaCavaCurve, 32, 0.012, 12, false);
     const cavaMesh = new THREE.Mesh(cavaGeo, veinMat);
     cavaMesh.userData = {
       systemId: 'circulatory',
@@ -148,54 +152,44 @@ export class CirculatorySystem {
     };
     this.vesselsGroup.add(cavaMesh);
 
-    // 3. Carotid and Jugular to Head
-    const rightCarotid = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0.01, 1.39, 0.01),
-      new THREE.Vector3(0.025, 1.52, 0.01),
-      new THREE.Vector3(0.02, 1.62, 0.02),
+    // 3. Vasos carotídeos y yugulares
+    const rCarotid = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0.01, 1.37, 0.01),
+      new THREE.Vector3(0.022, 1.50, 0.01),
+      new THREE.Vector3(0.02, 1.62, 0.015),
     ]);
-    const leftCarotid = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(-0.015, 1.39, 0.01),
-      new THREE.Vector3(-0.025, 1.52, 0.01),
-      new THREE.Vector3(-0.02, 1.62, 0.02),
+    const lCarotid = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-0.015, 1.37, 0.01),
+      new THREE.Vector3(-0.022, 1.50, 0.01),
+      new THREE.Vector3(-0.02, 1.62, 0.015),
     ]);
-    this.vesselsGroup.add(new THREE.Mesh(new THREE.TubeGeometry(rightCarotid, 16, 0.006, 8, false), arteryMat));
-    this.vesselsGroup.add(new THREE.Mesh(new THREE.TubeGeometry(leftCarotid, 16, 0.006, 8, false), arteryMat));
+    this.vesselsGroup.add(new THREE.Mesh(new THREE.TubeGeometry(rCarotid, 16, 0.005, 8, false), arteryMat));
+    this.vesselsGroup.add(new THREE.Mesh(new THREE.TubeGeometry(lCarotid, 16, 0.005, 8, false), arteryMat));
 
-    // 4. Iliac & Femoral Arteries to Limbs
-    const rightFemoral = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0.0, 0.92, -0.02),
-      new THREE.Vector3(0.06, 0.85, 0.0),
-      new THREE.Vector3(0.08, 0.65, 0.01),
-      new THREE.Vector3(0.07, 0.45, 0.0),
+    // 4. Arterias ilíacas y femorales
+    const rFemoral = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0.0, 0.90, -0.02),
+      new THREE.Vector3(0.05, 0.82, 0.0),
+      new THREE.Vector3(0.07, 0.62, 0.01),
+      new THREE.Vector3(0.065, 0.42, 0.0),
     ]);
-    const leftFemoral = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0.0, 0.92, -0.02),
-      new THREE.Vector3(-0.06, 0.85, 0.0),
-      new THREE.Vector3(-0.08, 0.65, 0.01),
-      new THREE.Vector3(-0.07, 0.45, 0.0),
+    const lFemoral = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0.0, 0.90, -0.02),
+      new THREE.Vector3(-0.05, 0.82, 0.0),
+      new THREE.Vector3(-0.07, 0.62, 0.01),
+      new THREE.Vector3(-0.065, 0.42, 0.0),
     ]);
-    this.vesselsGroup.add(new THREE.Mesh(new THREE.TubeGeometry(rightFemoral, 24, 0.007, 8, false), arteryMat));
-    this.vesselsGroup.add(new THREE.Mesh(new THREE.TubeGeometry(leftFemoral, 24, 0.007, 8, false), arteryMat));
+    this.vesselsGroup.add(new THREE.Mesh(new THREE.TubeGeometry(rFemoral, 24, 0.006, 8, false), arteryMat));
+    this.vesselsGroup.add(new THREE.Mesh(new THREE.TubeGeometry(lFemoral, 24, 0.006, 8, false), arteryMat));
   }
 
   private buildProceduralHeart(): void {
     const heartGroup = new THREE.Group();
-    heartGroup.name = 'Procedural_Heart';
-    const mat = new THREE.MeshStandardMaterial({
-      color: 0xdc2626,
-      roughness: 0.35,
-      metalness: 0.1,
-    });
-    const mesh = new THREE.Mesh(new THREE.SphereGeometry(0.07, 24, 24), mat);
+    const mat = new THREE.MeshStandardMaterial({ color: 0x8b1e2a, roughness: 0.3, clearcoat: 0.8 });
+    const mesh = new THREE.Mesh(new THREE.SphereGeometry(0.06, 24, 24), mat);
     mesh.scale.set(1.0, 1.25, 0.9);
-    mesh.position.set(-0.015, 1.30, 0.035);
-    mesh.userData = {
-      systemId: 'circulatory',
-      structureId: 'heart',
-      structureName: 'Corazón (Miocardio)',
-      selectable: true,
-    };
+    mesh.position.set(-0.015, 1.28, 0.02);
+    mesh.userData = { systemId: 'circulatory', structureId: 'heart', structureName: 'Corazón (Miocardio)', selectable: true };
     heartGroup.add(mesh);
     this.group.add(heartGroup);
     this.heartMesh = heartGroup;
@@ -228,7 +222,6 @@ export class CirculatorySystem {
   }
 
   public setExploded(offset: number): void {
-    // Moves slightly forward and to the left
     this.group.position.set(-offset * 0.2, 0, offset * 0.25);
   }
 }
