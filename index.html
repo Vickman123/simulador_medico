@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#030712">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="HUMAN XR – Laboratorio de Anatomía Humana Inmersiva para Meta Quest 3 y Meta Quest 3S. Desarrollado para PC PUMA – UNAM.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🫀</text></svg>">
+  <title>HUMAN XR – Laboratorio de Anatomía Humana | PC PUMA – UNAM</title>
+  <link rel="stylesheet" href="./src/styles/main.css">
+</head>
+<body>
+  <div id="app-container">
+    <!-- WebGL Canvas Host -->
+    <div id="webgl-canvas-container"></div>
+
+    <!-- Loading Screen -->
+    <div id="loading-overlay" class="loading-overlay">
+      <div class="loading-spinner"></div>
+      <div class="loading-title">HUMAN <span style="color: #00f0ff;">XR</span></div>
+      <div class="loading-subtitle" id="loading-status-text">Iniciando laboratorio de anatomía virtual...</div>
+      <div style="font-size: 11px; color: #64748b; margin-top: 6px;">PC PUMA – Universidad Nacional Autónoma de México</div>
+    </div>
+  </div>
+
+  <script type="module" src="./src/main.ts"></script>
+</body>
+</html>

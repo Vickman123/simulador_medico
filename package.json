@@ -1,0 +1,25 @@
+{
+  "name": "human-xr-anatomia",
+  "version": "1.0.0",
+  "description": "HUMAN XR – Laboratorio de Anatomía Humana Inmersiva para Meta Quest 3/3S y WebXR (PC PUMA - UNAM)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vickman123/simulador_medico.git"
+  },
+  "author": "PC PUMA - UNAM & HUMAN XR Team",
+  "license": "MIT",
+  "dependencies": {
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.187.0",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.0"
+  }
+}
