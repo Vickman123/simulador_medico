@@ -1,7 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Gestor del Entorno Tridimensional y Laboratorio Futurista
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 import * as THREE from 'three';
@@ -70,7 +70,7 @@ export class SceneManager {
     rimLight.position.set(-4, 5, -4);
     scene.add(rimLight);
 
-    // 4. Subtle UNAM Gold Fill Light
+    // 4. Subtle Amber/Gold Warm Fill Light
     const fillLight = new THREE.DirectionalLight(0xd97706, 0.45);
     fillLight.position.set(0, -2, 4);
     scene.add(fillLight);

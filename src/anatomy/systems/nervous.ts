@@ -2,7 +2,7 @@
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Módulo: Sistema Nervioso (Systema nervosum)
  * Encéfalo Allen Reference Atlas en cavidad craneal, médula y red periférica
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 import * as THREE from 'three';

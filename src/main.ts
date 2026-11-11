@@ -1,7 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Punto de Entrada Principal (Main Application Entrypoint)
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 import { ExperienceManager } from './core/experienceManager.js';

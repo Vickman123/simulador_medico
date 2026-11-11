@@ -2,7 +2,7 @@
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Módulo: Sistema Muscular (Systema musculare)
  * Basado en 177 estructuras musculares anatómicas de BodyParts3D / OrganUI
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 import * as THREE from 'three';

@@ -1,7 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Panel Holográfico Tridimensional Flotante (3D Information Panel)
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 import * as THREE from 'three';
@@ -140,7 +140,7 @@ export class HolographicInfoPanel {
     // Institution tag
     ctx.font = '600 20px "Segoe UI", Roboto, sans-serif';
     ctx.fillStyle = '#00f0ff';
-    ctx.fillText('PC PUMA – UNAM | HUMAN XR', 36, 44);
+    ctx.fillText('VICKORA LABS | HUMAN XR', 36, 44);
 
     // System badge
     const badgeText = sys ? `${sys.icon} ${sys.name.toUpperCase()}` : 'ANATOMÍA HUMANA';
@@ -195,7 +195,7 @@ export class HolographicInfoPanel {
     currentY += 28;
     currentY = this.wrapText(ctx, structure.location, 36, currentY, w - 72, 28);
 
-    // Section: Perlas Clínicas UNAM
+    // Section: Perlas Clínicas Médicas
     if (structure.clinicalPearls && structure.clinicalPearls.length > 0) {
       currentY += 15;
       ctx.font = '700 22px "Segoe UI", Roboto, sans-serif';
@@ -238,9 +238,9 @@ export class HolographicInfoPanel {
     ctx.fillStyle = '#00f0ff';
     ctx.fillText('Laboratorio de Anatomía Humana Inmersiva', w / 2, 120);
 
-    ctx.font = '400 20px "Segoe UI", Roboto, sans-serif';
-    ctx.fillStyle = '#d97706';
-    ctx.fillText('PC PUMA – Universidad Nacional Autónoma de México', w / 2, 155);
+    ctx.font = '600 20px "Segoe UI", Roboto, sans-serif';
+    ctx.fillStyle = '#38bdf8';
+    ctx.fillText('Vickora Labs | Innovación Médica Inmersiva', w / 2, 155);
 
     ctx.font = '400 20px "Segoe UI", Roboto, sans-serif';
     ctx.fillStyle = '#94a3b8';

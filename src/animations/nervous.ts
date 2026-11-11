@@ -1,7 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Simulación Fisiológica: Propagación del Potencial de Acción (Action Potentials)
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 import * as THREE from 'three';

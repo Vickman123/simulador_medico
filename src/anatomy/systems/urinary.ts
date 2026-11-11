@@ -2,7 +2,7 @@
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Módulo: Sistema Urinario (Systema urinarium)
  * Riñones y vejiga NIH HRA + uréteres y cápsula renal PBR
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 import * as THREE from 'three';

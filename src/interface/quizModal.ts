@@ -1,7 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
- * Modal Interactivo de Evaluación Médica UNAM
- * PC PUMA – UNAM
+ * Modal Interactivo de Evaluación Médica
+ * Vickora Labs
  */
 
 import { ANATOMICAL_QUIZ_QUESTIONS, QuizQuestion } from '../education/quizzes.js';
@@ -166,7 +166,7 @@ export class QuizModalUI {
         </div>
 
         <div style="color: #cbd5e1; font-size: 15px; max-width: 440px; line-height: 1.5;">
-          Has obtenido <strong>${this.score} de ${total}</strong> aciertos en los módulos de ciencias morfológicas de PC PUMA – UNAM.
+          Has obtenido <strong>${this.score} de ${total}</strong> aciertos en los módulos de ciencias morfológicas de Vickora Labs.
         </div>
 
         <div style="width: 100%; display: flex; gap: 12px; margin-top: 10px;">

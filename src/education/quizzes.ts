@@ -1,7 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Banco de Preguntas y Evaluación Educativa
- * PC PUMA – UNAM | Facultad de Medicina
+ * Vickora Labs | Ciencias Médicas y Morfológicas
  */
 
 import { AnatomicalSystemId } from '../anatomy/catalog.js';

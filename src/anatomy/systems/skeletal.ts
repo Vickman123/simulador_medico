@@ -2,7 +2,7 @@
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Módulo: Sistema Óseo (Systema skeletale)
  * Basado en 242 huesos anatómicos de BodyParts3D / OrganUI
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 import * as THREE from 'three';

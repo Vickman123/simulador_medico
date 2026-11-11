@@ -1,7 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Simulación Fisiológica: Mecánica Ventilatoria (Respiratory Mechanics)
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 import * as THREE from 'three';

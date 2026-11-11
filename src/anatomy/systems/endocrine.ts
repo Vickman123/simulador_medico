@@ -2,7 +2,7 @@
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Módulo: Sistema Endocrino (Systema endocrinum)
  * Timo y páncreas NIH HRA + tiroides, hipófisis y suprarrenales PBR
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 import * as THREE from 'three';

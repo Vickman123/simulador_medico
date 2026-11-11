@@ -1,7 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Dock de Selección y Control de Sistemas Anatómicos
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 import { HumanBody } from '../anatomy/humanBody.js';

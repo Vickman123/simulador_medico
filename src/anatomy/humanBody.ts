@@ -2,7 +2,7 @@
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Orquestador Central del Cuerpo Humano (Human Body Master Model)
  * Integra los 8 sistemas anatómicos y silueta humana de cristal traslúcida
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 import * as THREE from 'three';
@@ -112,7 +112,7 @@ export class HumanBody {
     this.pedestalRing.position.y = 0.003;
     this.pedestalGroup.add(this.pedestalRing);
 
-    // 3. Anillo dorado conmemorativo UNAM
+    // 3. Anillo de energía dorada
     const goldRingGeo = new THREE.RingGeometry(0.64, 0.66, 48);
     const goldRingMat = new THREE.MeshBasicMaterial({
       color: 0xd97706,

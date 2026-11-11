@@ -2,7 +2,7 @@
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Módulo: Sistema Circulatorio (Systema cardiovasculare)
  * Corazón anatómico NIH HRA con acabado seroso PBR y árbol vascular
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 import * as THREE from 'three';

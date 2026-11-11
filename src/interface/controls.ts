@@ -1,7 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Barra de Controles Inferior y Vistas Anatómicas
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 export interface ControlsCallbacks {
@@ -42,8 +42,8 @@ export class ControlsUI {
         <span>💓</span> Simulación Fisiológica
       </button>
 
-      <button class="control-btn btn-quiz" id="btn-open-quiz" title="Evaluación Anatómica interactiva UNAM">
-        <span>📝</span> Evaluación UNAM
+      <button class="control-btn btn-quiz" id="btn-open-quiz" title="Evaluación Anatómica interactiva">
+        <span>📝</span> Evaluación Médica
       </button>
 
       <div class="separator"></div>

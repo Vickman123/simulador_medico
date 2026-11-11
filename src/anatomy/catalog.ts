@@ -1,7 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Catálogo Centralizado de Sistemas y Estructuras Anatómicas
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 export interface AnatomicalStructure {

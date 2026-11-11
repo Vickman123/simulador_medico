@@ -2,7 +2,7 @@
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Módulo: Sistema Digestivo (Systema digestorium)
  * Modelos anatómicos NIH HRA + BodyParts3D con shaders serosos PBR de alta fidelidad
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 import * as THREE from 'three';

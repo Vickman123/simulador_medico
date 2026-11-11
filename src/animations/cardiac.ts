@@ -1,7 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Simulación Fisiológica: Ciclo Cardíaco (Cardiac Cycle)
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 import { CirculatorySystem } from '../anatomy/systems/circulatory.js';

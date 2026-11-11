@@ -1,7 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Gestión de Sesión WebXR y Optimizaciones Meta Quest 3 / 3S
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 import { XRApp } from '../core/vxr/XRApp.js';

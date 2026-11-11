@@ -2,7 +2,7 @@
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Módulo: Sistema Respiratorio (Systema respiratorium)
  * Pulmones anatómicos NIH HRA con textura parenquimatosa y tráquea
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 import * as THREE from 'three';

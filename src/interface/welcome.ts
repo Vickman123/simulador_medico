@@ -1,7 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Pantalla de Bienvenida y Guía de Interacción Inmersiva
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 export interface WelcomeModalCallbacks {
@@ -41,7 +41,7 @@ export class WelcomeModalUI {
   private render(): void {
     this.card.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <span class="modal-badge">PC PUMA – UNAM | INNOVACIÓN EDUCATIVA</span>
+        <span class="modal-badge">VICKORA LABS | INNOVACIÓN MÉDICA</span>
         <span style="font-size: 12px; color: #00f0ff; font-weight: 700;">DEMO TECNOLÓGICA</span>
       </div>
 
@@ -55,7 +55,7 @@ export class WelcomeModalUI {
       </div>
 
       <div class="modal-description">
-        Bienvenido al entorno tridimensional de aprendizaje anatómico de la Universidad Nacional Autónoma de México. Explora el cuerpo humano a través de 8 sistemas anatómicos interactivos, visualiza simulaciones fisiológicas en tiempo real y evalúa tus conocimientos morfológicos.
+        Bienvenido al entorno tridimensional de aprendizaje anatómico inmersivo de Vickora Labs. Explora el cuerpo humano a través de 8 sistemas anatómicos interactivos, visualiza simulaciones fisiológicas en tiempo real y evalúa tus conocimientos morfológicos.
       </div>
 
       <div class="controls-guide-grid">

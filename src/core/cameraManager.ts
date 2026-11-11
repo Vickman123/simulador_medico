@@ -1,7 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Gestor de Cámara y Vistas Anatómicas Predefinidas
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 import * as THREE from 'three';

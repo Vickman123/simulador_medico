@@ -1,7 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Experience Manager (Master Controller)
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 import * as THREE from 'three';
@@ -207,7 +207,7 @@ export class ExperienceManager {
     header.className = 'header-bar';
     header.innerHTML = `
       <div class="brand-section">
-        <span class="unam-logo-badge">UNAM | PC PUMA</span>
+        <span class="unam-logo-badge">VICKORA LABS</span>
         <div>
           <div class="brand-title">HUMAN <span>XR</span></div>
           <div class="brand-subtitle">Laboratorio de Anatomía Humana Inmersiva</div>

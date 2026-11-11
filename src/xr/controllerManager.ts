@@ -1,7 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Gestor de Controladores WebXR y Punteros Láser para Meta Quest 3/3S
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 import * as THREE from 'three';

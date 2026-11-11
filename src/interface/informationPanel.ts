@@ -1,7 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Panel Lateral de Inspección y Ficha Médica
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 import { AnatomicalStructure, ANATOMICAL_SYSTEMS } from '../anatomy/catalog.js';
@@ -54,7 +54,7 @@ export class InformationPanelUI {
     if (structure.clinicalPearls && structure.clinicalPearls.length > 0) {
       pearlsHTML = `
         <div class="inspector-section">
-          <span class="section-label">🩺 Correlación Clínica UNAM</span>
+          <span class="section-label">🩺 Correlación Clínica Médica</span>
           <div class="clinical-box">
             ${structure.clinicalPearls.map((p) => `<p style="margin-bottom: 6px;">• ${p}</p>`).join('')}
           </div>

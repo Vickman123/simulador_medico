@@ -1,7 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Sistema Unificado de Raycasting (Escritorio + WebXR)
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 import * as THREE from 'three';

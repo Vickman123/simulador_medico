@@ -1,7 +1,7 @@
 /**
  * HUMAN XR – Laboratorio de Anatomía Humana
  * Utilidad de Resolución de Rutas de Recursos (Asset Helper)
- * PC PUMA – UNAM
+ * Vickora Labs
  */
 
 export function resolveModelUrl(modelPath: string): string {
