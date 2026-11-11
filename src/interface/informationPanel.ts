@@ -68,20 +68,21 @@ export class InformationPanelUI {
           <span class="inspector-system-tag" style="color: ${sys ? sys.accentColor : '#00f0ff'};">
             ${sys ? `${sys.icon} ${sys.name}` : 'ANATOMÍA'}
           </span>
-          <button id="btn-close-inspector" style="background:none; border:none; color:#94a3b8; font-size:16px; cursor:pointer;">✕</button>
+          <button id="btn-close-inspector" style="background:none; border:none; color:#94a3b8; font-size:16px; cursor:pointer;" title="Cerrar panel">✕</button>
         </div>
         <div class="inspector-title">${structure.name}</div>
         <div class="inspector-latin">${structure.latinName}</div>
+        ${this.isCurrentlyIsolated ? '<div class="solo-active-badge">🔬 MODO EN SOLITARIO ACTIVO</div>' : ''}
+      </div>
+
+      <div class="inspector-section">
+        <span class="section-label">⚡ Función Fisiológica</span>
+        <div class="section-body" style="font-weight: 500; color: #f8fafc;">${structure.function}</div>
       </div>
 
       <div class="inspector-section">
         <span class="section-label">Descripción General</span>
         <div class="section-body">${structure.description}</div>
-      </div>
-
-      <div class="inspector-section">
-        <span class="section-label">⚡ Función Fisiológica</span>
-        <div class="section-body">${structure.function}</div>
       </div>
 
       <div class="inspector-section">
@@ -92,8 +93,8 @@ export class InformationPanelUI {
       ${pearlsHTML}
 
       <div class="inspector-actions">
-        <button class="btn-inspector-action" id="btn-isolate-organ">
-          ${this.isCurrentlyIsolated ? 'Quitar Aislamiento' : '🔍 Aislar Órgano'}
+        <button class="btn-inspector-action ${this.isCurrentlyIsolated ? 'btn-return-full' : 'btn-solo-action'}" id="btn-isolate-organ">
+          ${this.isCurrentlyIsolated ? '⬅️ Volver al Cuerpo Completo' : '🔍 Explorar Órgano Solo'}
         </button>
         <button class="btn-inspector-action" id="btn-read-aloud" style="flex: 0 0 44px;" title="Lectura Médica en Audio">
           🔊

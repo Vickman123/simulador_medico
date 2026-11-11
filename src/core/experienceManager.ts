@@ -58,6 +58,7 @@ export class ExperienceManager {
   public readonly quizModalUI: QuizModalUI;
 
   private isPhysiologyActive: boolean = true;
+  private floatingSoloHud: HTMLElement | null = null;
 
   constructor(container: HTMLElement) {
     // 1. Initialize VXR Core Application
@@ -115,15 +116,18 @@ export class ExperienceManager {
     });
 
     // 6. Setup 2D UI Components
-    this.systemSelectorUI = new SystemSelectorUI(this.humanBody);
+    this.systemSelectorUI = new SystemSelectorUI(this.humanBody, {
+      onSelectOrgan: (structureId) => {
+        this.selectStructure(structureId);
+      },
+    });
+
     this.infoPanelUI = new InformationPanelUI({
       onIsolate: (structureId) => {
-        this.humanBody.isolateStructure(structureId);
-        this.focusOnStructure(structureId);
+        this.enterSoloMode(structureId);
       },
       onResetIsolation: () => {
-        this.humanBody.resetIsolation();
-        this.cameraMgr.reset();
+        this.exitSoloMode();
       },
       onClose: () => {
         this.holographicPanel3D.hide();
@@ -140,6 +144,14 @@ export class ExperienceManager {
         const isSkin = this.humanBody.toggleSkin();
         this.playUiClickSound();
         return isSkin;
+      },
+      onToggleVisceral: () => {
+        const isVisceral = this.humanBody.toggleVisceralView();
+        (Object.keys(ANATOMICAL_SYSTEMS) as AnatomicalSystemId[]).forEach((id) => {
+          this.systemSelectorUI.updateSystemState(id, this.humanBody.isSystemVisible(id));
+        });
+        this.playUiClickSound();
+        return isVisceral;
       },
       onTogglePhysiology: () => {
         this.isPhysiologyActive = !this.isPhysiologyActive;
@@ -160,10 +172,7 @@ export class ExperienceManager {
         this.playUiClickSound();
       },
       onResetView: () => {
-        this.humanBody.resetIsolation();
-        this.infoPanelUI.setIsolateState(false);
-        this.cameraMgr.reset();
-        this.playUiClickSound();
+        this.exitSoloMode();
       },
       onCameraPreset: (preset: CameraPreset) => {
         this.cameraMgr.setPreset(preset);
@@ -247,6 +256,59 @@ export class ExperienceManager {
     root.appendChild(this.controlsUI.getElement());
     root.appendChild(this.quizModalUI.getElement());
     root.appendChild(this.welcomeModalUI.getElement());
+
+    // Floating Solo Mode Return HUD
+    this.floatingSoloHud = document.createElement('div');
+    this.floatingSoloHud.className = 'floating-solo-hud hidden';
+    this.floatingSoloHud.innerHTML = `
+      <div class="solo-hud-box">
+        <span class="solo-hud-pulse"></span>
+        <div class="solo-hud-texts">
+          <span class="solo-hud-label">MODO INSPECCIÓN EN SOLITARIO:</span>
+          <span class="solo-hud-title" id="solo-hud-organ-name">Órgano</span>
+        </div>
+        <button class="btn-exit-solo" id="btn-floating-exit-solo" title="Regresar al modelo corporal completo">
+          ⬅️ Volver al Cuerpo Completo
+        </button>
+      </div>
+    `;
+    root.appendChild(this.floatingSoloHud);
+
+    this.floatingSoloHud.querySelector('#btn-floating-exit-solo')?.addEventListener('click', () => {
+      this.exitSoloMode();
+    });
+  }
+
+  public enterSoloMode(structureId: string): void {
+    const structure = ANATOMICAL_STRUCTURES[structureId];
+    if (!structure) return;
+
+    this.humanBody.isolateStructure(structureId);
+    this.infoPanelUI.setIsolateState(true);
+
+    if (this.floatingSoloHud) {
+      const nameEl = this.floatingSoloHud.querySelector('#solo-hud-organ-name');
+      if (nameEl) nameEl.textContent = structure.name;
+      this.floatingSoloHud.classList.remove('hidden');
+    }
+
+    this.focusOnStructure(structureId);
+    this.playSelectSound();
+  }
+
+  public exitSoloMode(): void {
+    this.humanBody.resetIsolation();
+    this.infoPanelUI.setIsolateState(false);
+    if (this.floatingSoloHud) {
+      this.floatingSoloHud.classList.add('hidden');
+    }
+    this.cameraMgr.reset();
+    this.playUiClickSound();
+
+    // Sincronizar dock de sistemas con visibilidad restaurada
+    (Object.keys(ANATOMICAL_SYSTEMS) as AnatomicalSystemId[]).forEach((id) => {
+      this.systemSelectorUI.updateSystemState(id, this.humanBody.isSystemVisible(id));
+    });
   }
 
   public async loadAnatomicalModels(onProgress?: (name: string, p: number) => void): Promise<void> {
@@ -271,6 +333,9 @@ export class ExperienceManager {
     if (structure.suggestedCameraOffset && structure.suggestedLookAt) {
       this.cameraMgr.focusOnPoint(structure.suggestedCameraOffset, structure.suggestedLookAt);
     }
+
+    // 4. Highlight in Organ List
+    this.systemSelectorUI.highlightOrgan(structureId);
   }
 
   public focusOnStructure(structureId: string): void {

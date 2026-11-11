@@ -15,7 +15,7 @@ import { DigestiveSystem } from './systems/digestive.js';
 import { RespiratorySystem } from './systems/respiratory.js';
 import { UrinarySystem } from './systems/urinary.js';
 import { EndocrineSystem } from './systems/endocrine.js';
-import { AnatomicalSystemId, ANATOMICAL_SYSTEMS } from './catalog.js';
+import { AnatomicalSystemId, ANATOMICAL_SYSTEMS, ANATOMICAL_STRUCTURES } from './catalog.js';
 import { resolveModelUrl } from '../core/assetHelper.js';
 
 export class HumanBody {
@@ -304,46 +304,118 @@ export class HumanBody {
     return this.isExploded;
   }
 
+  private isSoloMode: boolean = false;
+  private preSoloSystemStates: Record<AnatomicalSystemId, boolean> | null = null;
+  private preSoloSkinState: boolean = false;
+
   public isolateStructure(structureId: string): void {
+    if (!this.isSoloMode) {
+      // Guardar estados previos de visibilidad para restaurarlos al salir
+      this.preSoloSystemStates = { ...this.systemStates };
+      this.preSoloSkinState = this.isSkinVisible;
+      this.isSoloMode = true;
+    }
+
     this.isolatedStructureId = structureId;
 
-    // Atenuar el resto de estructuras
-    this.group.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh && child.userData && child.userData.structureId) {
-        const mesh = child as THREE.Mesh;
-        const isTarget = mesh.userData.structureId === structureId;
-        const mat = mesh.material as THREE.MeshStandardMaterial;
+    // Encontrar el sistema al que pertenece la estructura
+    const targetDef = ANATOMICAL_STRUCTURES[structureId];
+    const targetSystemId = targetDef?.systemId;
 
-        if (isTarget) {
-          mat.opacity = 1.0;
-          mat.transparent = false;
-          mat.emissive = new THREE.Color(0x00f0ff);
-          mat.emissiveIntensity = 0.45;
-        } else {
-          mat.transparent = true;
-          mat.opacity = 0.12;
-          mat.emissiveIntensity = 0;
+    // 1. Ocultar todos los demás sistemas y mantener visible el sistema del órgano objetivo
+    (Object.keys(this.systemStates) as AnatomicalSystemId[]).forEach((sysId) => {
+      const shouldBeVisible = targetSystemId ? sysId === targetSystemId : true;
+      this.setSystemVisibility(sysId, shouldBeVisible);
+    });
+
+    if (this.skinGroup) {
+      this.skinGroup.visible = false;
+    }
+
+    // 2. Ocultar todas las demás mallas dentro del sistema para dejar ÚNICAMENTE el órgano en pantalla
+    this.group.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh && child.userData) {
+        const mesh = child as THREE.Mesh;
+        if (mesh.userData.structureId) {
+          const isTarget = mesh.userData.structureId === structureId;
+          mesh.visible = isTarget;
+          if (isTarget && mesh.material) {
+            const mat = mesh.material as THREE.MeshStandardMaterial;
+            mat.transparent = false;
+            mat.opacity = 1.0;
+            if (mat.emissive) {
+              mat.emissive = new THREE.Color(0x00f0ff);
+              mat.emissiveIntensity = 0.2;
+            }
+          }
         }
       }
     });
+
+    // 3. Mantener siempre visible la plataforma del podio holográfico
+    this.pedestalGroup.visible = true;
   }
 
   public resetIsolation(): void {
     this.isolatedStructureId = null;
+    this.isSoloMode = false;
 
+    // Restaurar visibilidad de todas las mallas
     this.group.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh && child.userData && child.userData.systemId) {
+      if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
-        const mat = mesh.material as THREE.MeshStandardMaterial;
-        mat.transparent = false;
-        mat.opacity = 1.0;
-        mat.emissiveIntensity = 0;
+        mesh.visible = true;
+        if (mesh.material) {
+          const mat = mesh.material as THREE.MeshStandardMaterial;
+          mat.transparent = false;
+          mat.opacity = 1.0;
+          if (mat.emissive) {
+            mat.emissive.setHex(0x000000);
+            mat.emissiveIntensity = 0;
+          }
+        }
       }
     });
 
-    (Object.keys(this.systemStates) as AnatomicalSystemId[]).forEach((id) => {
-      this.setSystemVisibility(id, this.systemStates[id]);
-    });
+    // Restaurar los estados que tenían los sistemas antes de aislar
+    if (this.preSoloSystemStates) {
+      (Object.keys(this.preSoloSystemStates) as AnatomicalSystemId[]).forEach((sysId) => {
+        this.setSystemVisibility(sysId, this.preSoloSystemStates![sysId]);
+      });
+      this.preSoloSystemStates = null;
+    } else {
+      (Object.keys(this.systemStates) as AnatomicalSystemId[]).forEach((id) => {
+        this.setSystemVisibility(id, this.systemStates[id]);
+      });
+    }
+
+    if (this.skinGroup) {
+      this.skinGroup.visible = this.preSoloSkinState;
+    }
+  }
+
+  public getIsSoloMode(): boolean {
+    return this.isSoloMode;
+  }
+
+  public toggleVisceralView(): boolean {
+    // Si muscular u óseo están activos, apagarlos para ver órganos internos
+    const areCoveringsActive = this.systemStates.muscular || this.systemStates.skeletal;
+    if (areCoveringsActive) {
+      this.setSystemVisibility('muscular', false);
+      this.setSystemVisibility('skeletal', false);
+      this.setSystemVisibility('circulatory', true);
+      this.setSystemVisibility('respiratory', true);
+      this.setSystemVisibility('digestive', true);
+      this.setSystemVisibility('urinary', true);
+      this.setSystemVisibility('endocrine', true);
+      this.setSystemVisibility('nervous', true);
+      return true; // Visceral mode ON
+    } else {
+      this.setSystemVisibility('muscular', true);
+      this.setSystemVisibility('skeletal', true);
+      return false; // Visceral mode OFF
+    }
   }
 
   public getIsolatedStructureId(): string | null {

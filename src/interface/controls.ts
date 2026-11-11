@@ -8,6 +8,7 @@ export interface ControlsCallbacks {
   onToggleExploded?: () => boolean;
   onToggleSkin?: () => boolean;
   onTogglePhysiology?: () => boolean;
+  onToggleVisceral?: () => boolean;
   onOpenQuiz?: () => void;
   onResetView?: () => void;
   onCameraPreset?: (preset: 'frontal' | 'posterior' | 'lateral' | 'superior' | 'torax' | 'cabeza') => void;
@@ -36,6 +37,10 @@ export class ControlsUI {
 
       <button class="control-btn" id="btn-toggle-skin" title="Mostrar u ocultar la silueta humana de cristal">
         <span>👤</span> Silueta Cristal
+      </button>
+
+      <button class="control-btn" id="btn-toggle-visceral" title="Ocultar Músculos y Huesos para ver e interactuar directamente con los Órganos Internos">
+        <span>🫀</span> Órganos Internos
       </button>
 
       <button class="control-btn active" id="btn-toggle-physiology" title="Activar/Pausar animaciones fisiológicas de latido, respiración y peristalsis">
@@ -86,6 +91,15 @@ export class ControlsUI {
       if (this.callbacks.onToggleSkin) {
         const isSkin = this.callbacks.onToggleSkin();
         skinBtn.classList.toggle('active', isSkin);
+      }
+    });
+
+    // Visceral / Internal Organs Quick Toggle
+    const visceralBtn = this.container.querySelector('#btn-toggle-visceral') as HTMLElement;
+    visceralBtn.addEventListener('click', () => {
+      if (this.callbacks.onToggleVisceral) {
+        const isVisceral = this.callbacks.onToggleVisceral();
+        visceralBtn.classList.toggle('active', isVisceral);
       }
     });
 

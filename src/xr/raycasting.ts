@@ -70,17 +70,26 @@ export class UnifiedRaycaster {
   private processHitSelection(intersections: THREE.Intersection[]): void {
     if (!intersections || intersections.length === 0) return;
 
-    for (const hit of intersections) {
+    // Priorizar órganos internos específicos sobre las mallas musculares o esqueléticas envolventes
+    const specificHit = intersections.find((hit) => {
       const mesh = hit.object as THREE.Mesh;
-      if (mesh.userData && mesh.userData.selectable && mesh.userData.structureId) {
-        if (this.callbacks.onSelect) {
-          this.callbacks.onSelect(
-            mesh.userData.structureId,
-            mesh.userData.structureName || mesh.name,
-            hit.point
-          );
-        }
-        break;
+      const id = mesh.userData?.structureId;
+      return id && id !== 'muscular' && id !== 'skeleton' && id !== 'skin' && mesh.userData.selectable;
+    });
+
+    const targetHit = specificHit || intersections.find((hit) => {
+      const mesh = hit.object as THREE.Mesh;
+      return mesh.userData && mesh.userData.selectable && mesh.userData.structureId;
+    });
+
+    if (targetHit) {
+      const mesh = targetHit.object as THREE.Mesh;
+      if (this.callbacks.onSelect) {
+        this.callbacks.onSelect(
+          mesh.userData.structureId,
+          mesh.userData.structureName || mesh.name,
+          targetHit.point
+        );
       }
     }
   }
@@ -103,8 +112,13 @@ export class UnifiedRaycaster {
         const raycaster = new THREE.Raycaster();
         raycaster.setFromCamera(this.mousePosition, this.app.camera);
         const hits = raycaster.intersectObjects(selectableTargets, true);
-        if (hits.length > 0 && hits[0].object.userData?.selectable) {
-          activeHit = hits[0];
+        if (hits.length > 0) {
+          // Priorizar órganos específicos si el cursor apunta sobre ellos
+          const specificHit = hits.find((h) => {
+            const id = h.object.userData?.structureId;
+            return id && id !== 'muscular' && id !== 'skeleton' && id !== 'skin' && h.object.userData?.selectable;
+          });
+          activeHit = specificHit || hits.find((h) => h.object.userData?.selectable) || null;
         }
       }
     }

@@ -936,3 +936,287 @@ body, html {
   font-size: 13px;
   color: var(--accent-cyan);
 }
+
+/* ==========================================================================
+   Dock Tabs (Sistemas vs Órganos) & Direct Organ Explorer
+   ========================================================================== */
+.dock-tab-header {
+  display: flex;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dock-tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.dock-tab-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.dock-tab-btn.active {
+  background: rgba(0, 240, 255, 0.2);
+  color: var(--accent-cyan);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.25);
+}
+
+.dock-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dock-view-container.hidden {
+  display: none !important;
+}
+
+/* Quick Visceral Toggle Button */
+.btn-dock-visceral {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(56, 189, 248, 0.15));
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  color: #38bdf8;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  margin-top: 4px;
+}
+
+.btn-dock-visceral:hover {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(56, 189, 248, 0.25));
+  border-color: #38bdf8;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+  color: #ffffff;
+}
+
+/* Organ Cards List */
+.organs-list-intro {
+  font-size: 11px;
+  color: #94a3b8;
+  line-height: 1.4;
+  padding-bottom: 4px;
+}
+
+.organs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.organ-card-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.organ-card-btn:hover {
+  background: rgba(0, 240, 255, 0.12);
+  border-color: var(--accent-cyan);
+  transform: translateX(2px);
+}
+
+.organ-card-btn.active {
+  background: rgba(0, 240, 255, 0.2);
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+}
+
+.organ-card-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.organ-icon {
+  font-size: 15px;
+}
+
+.organ-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.organ-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.organ-tag {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.organ-arrow {
+  color: #64748b;
+  font-size: 12px;
+  transition: color 0.18s ease;
+}
+
+.organ-card-btn:hover .organ-arrow,
+.organ-card-btn.active .organ-arrow {
+  color: var(--accent-cyan);
+}
+
+/* Floating Solo Mode Return HUD */
+.floating-solo-hud {
+  position: absolute;
+  top: 75px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  animation: fadeInDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.floating-solo-hud.hidden {
+  display: none !important;
+}
+
+.solo-hud-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(8, 17, 32, 0.92);
+  border: 1.5px solid var(--accent-cyan);
+  padding: 10px 20px;
+  border-radius: 30px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 0 25px rgba(0, 240, 255, 0.45), 0 8px 30px rgba(0, 0, 0, 0.7);
+}
+
+.solo-hud-pulse {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 12px #38bdf8;
+  animation: pulseGlow 1.5s infinite;
+}
+
+.solo-hud-texts {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.solo-hud-label {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+.solo-hud-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.btn-exit-solo {
+  background: linear-gradient(135deg, #0284c7, #0369a1);
+  border: 1px solid #38bdf8;
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-exit-solo:hover {
+  background: linear-gradient(135deg, #0369a1, #0284c7);
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.6);
+  transform: scale(1.03);
+}
+
+/* Inspector Solo Badges and Buttons */
+.solo-active-badge {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(0, 240, 255, 0.15);
+  border: 1px solid var(--accent-cyan);
+  color: var(--accent-cyan);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+}
+
+.btn-solo-action {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.18), rgba(2, 132, 199, 0.28));
+  border: 1px solid var(--accent-cyan);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.btn-solo-action:hover {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.32), rgba(2, 132, 199, 0.42));
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+}
+
+.btn-return-full {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.3));
+  border: 1px solid #ef4444;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.btn-return-full:hover {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.35), rgba(220, 38, 38, 0.45));
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.45);
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -12px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 0.6;
+  }
+}
