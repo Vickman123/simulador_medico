@@ -38,7 +38,7 @@ export class RespiratorySystem {
           this.lungsMesh.name = 'Anatomical_Lungs';
 
           // Shader PBR de parénquima pulmonar realista (Rosa malva esponjoso y ligeramente translúcido)
-          const lungMat = new THREE.MeshStandardMaterial({
+          const lungMat = new THREE.MeshPhysicalMaterial({
             color: 0xbe6e7b, // Rosa grisáceo anatómico
             roughness: 0.52,
             metalness: 0.04,

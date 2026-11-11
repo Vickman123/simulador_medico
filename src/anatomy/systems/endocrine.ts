@@ -20,7 +20,7 @@ export class EndocrineSystem {
   public pituitaryMesh: THREE.Mesh | null = null;
   public adrenalsGroup: THREE.Group;
   public isLoaded: boolean = false;
-  private endocrineMaterials: THREE.MeshStandardMaterial[] = [];
+  private endocrineMaterials: (THREE.MeshStandardMaterial | THREE.MeshPhysicalMaterial)[] = [];
 
   constructor() {
     this.group = new THREE.Group();
@@ -41,7 +41,7 @@ export class EndocrineSystem {
           this.thymusMesh = gltf.scene;
           this.thymusMesh.name = 'Anatomical_Thymus';
 
-          const mat = new THREE.MeshStandardMaterial({
+          const mat = new THREE.MeshPhysicalMaterial({
             color: 0xad7080, // Tono linfoide rosado pálido
             roughness: 0.35,
             metalness: 0.05,
@@ -55,7 +55,7 @@ export class EndocrineSystem {
               mesh.castShadow = true;
               mesh.receiveShadow = true;
               mesh.material = mat.clone();
-              this.endocrineMaterials.push(mesh.material as THREE.MeshStandardMaterial);
+              this.endocrineMaterials.push(mesh.material as THREE.MeshPhysicalMaterial);
               mesh.userData = {
                 systemId: 'endocrine',
                 structureId: 'thymus',
@@ -98,7 +98,7 @@ export class EndocrineSystem {
           this.pancreasMesh = gltf.scene;
           this.pancreasMesh.name = 'Anatomical_Pancreas';
 
-          const mat = new THREE.MeshStandardMaterial({
+          const mat = new THREE.MeshPhysicalMaterial({
             color: 0xd49b49, // Glándula exocrina/endocrina lobulada amarillenta
             roughness: 0.38,
             metalness: 0.04,
@@ -112,7 +112,7 @@ export class EndocrineSystem {
               mesh.castShadow = true;
               mesh.receiveShadow = true;
               mesh.material = mat.clone();
-              this.endocrineMaterials.push(mesh.material as THREE.MeshStandardMaterial);
+              this.endocrineMaterials.push(mesh.material as THREE.MeshPhysicalMaterial);
               mesh.userData = {
                 systemId: 'endocrine',
                 structureId: 'endocrine_pancreas',
@@ -156,7 +156,7 @@ export class EndocrineSystem {
    * Glándula tiroides, hipófisis y glándulas suprarrenales anatómicas
    */
   private buildThyroidPituitaryAndAdrenals(): void {
-    const thyroidMat = new THREE.MeshStandardMaterial({
+    const thyroidMat = new THREE.MeshPhysicalMaterial({
       color: 0x8f3c39, // Muy vascularizada, pardo-rojiza
       roughness: 0.32,
       metalness: 0.05,
@@ -205,7 +205,7 @@ export class EndocrineSystem {
     this.group.add(thyroidGroup);
 
     // 2. Hipófisis / Glándula Pituitaria (Silla turca en la base del cráneo)
-    const pitMat = new THREE.MeshStandardMaterial({
+    const pitMat = new THREE.MeshPhysicalMaterial({
       color: 0xa45a7c, // Neuroendocrino
       roughness: 0.35,
       metalness: 0.04,
@@ -226,7 +226,7 @@ export class EndocrineSystem {
     this.group.add(this.pituitaryMesh);
 
     // 3. Glándulas Suprarrenales (Polos superiores de ambos riñones)
-    const adrenalMat = new THREE.MeshStandardMaterial({
+    const adrenalMat = new THREE.MeshPhysicalMaterial({
       color: 0xc89f3b, // Amarillo dorado ocre glandular
       roughness: 0.36,
       metalness: 0.04,

@@ -23,7 +23,7 @@ export class DigestiveSystem {
   public gallbladderMesh: THREE.Mesh | null = null;
 
   public isLoaded: boolean = false;
-  private organMaterials: THREE.MeshStandardMaterial[] = [];
+  private organMaterials: THREE.MeshPhysicalMaterial[] = [];
 
   constructor() {
     this.group = new THREE.Group();
@@ -43,7 +43,7 @@ export class DigestiveSystem {
           this.liverMesh.name = 'Anatomical_Liver';
 
           // Shader PBR de cápsula de Glisson y parénquima hepático húmedo
-          const liverMat = new THREE.MeshStandardMaterial({
+          const liverMat = new THREE.MeshPhysicalMaterial({
             color: 0x5e1914, // Pardo rojizo hepático profundo
             roughness: 0.28,
             metalness: 0.04,
@@ -57,7 +57,7 @@ export class DigestiveSystem {
               mesh.castShadow = true;
               mesh.receiveShadow = true;
               mesh.material = liverMat.clone();
-              this.organMaterials.push(mesh.material as THREE.MeshStandardMaterial);
+              this.organMaterials.push(mesh.material as THREE.MeshPhysicalMaterial);
               mesh.userData = {
                 systemId: 'digestive',
                 structureId: 'liver',
@@ -101,7 +101,7 @@ export class DigestiveSystem {
           this.spleenMesh = gltf.scene;
           this.spleenMesh.name = 'Anatomical_Spleen';
 
-          const spleenMat = new THREE.MeshStandardMaterial({
+          const spleenMat = new THREE.MeshPhysicalMaterial({
             color: 0x4a1525, // Púrpura esplénico
             roughness: 0.32,
             metalness: 0.05,
@@ -115,7 +115,7 @@ export class DigestiveSystem {
               mesh.castShadow = true;
               mesh.receiveShadow = true;
               mesh.material = spleenMat.clone();
-              this.organMaterials.push(mesh.material as THREE.MeshStandardMaterial);
+              this.organMaterials.push(mesh.material as THREE.MeshPhysicalMaterial);
               mesh.userData = {
                 systemId: 'digestive',
                 structureId: 'digestive_spleen',
@@ -159,7 +159,7 @@ export class DigestiveSystem {
           this.smallIntestineMesh.name = 'Anatomical_SmallIntestine';
 
           // Tono ocre entérico con serosa peritoneal
-          const mat = new THREE.MeshStandardMaterial({
+          const mat = new THREE.MeshPhysicalMaterial({
             color: 0xb5694a, // Mucosa intestinal
             roughness: 0.36,
             metalness: 0.04,
@@ -173,7 +173,7 @@ export class DigestiveSystem {
               mesh.castShadow = true;
               mesh.receiveShadow = true;
               mesh.material = mat.clone();
-              this.organMaterials.push(mesh.material as THREE.MeshStandardMaterial);
+              this.organMaterials.push(mesh.material as THREE.MeshPhysicalMaterial);
               mesh.userData = {
                 systemId: 'digestive',
                 structureId: 'intestine_small',
@@ -215,7 +215,7 @@ export class DigestiveSystem {
           this.largeIntestineMesh = gltf.scene;
           this.largeIntestineMesh.name = 'Anatomical_LargeIntestine';
 
-          const mat = new THREE.MeshStandardMaterial({
+          const mat = new THREE.MeshPhysicalMaterial({
             color: 0x8c3e2e, // Tono colónico más rojizo/marrón
             roughness: 0.35,
             metalness: 0.04,
@@ -229,7 +229,7 @@ export class DigestiveSystem {
               mesh.castShadow = true;
               mesh.receiveShadow = true;
               mesh.material = mat.clone();
-              this.organMaterials.push(mesh.material as THREE.MeshStandardMaterial);
+              this.organMaterials.push(mesh.material as THREE.MeshPhysicalMaterial);
               mesh.userData = {
                 systemId: 'digestive',
                 structureId: 'intestine_large',
@@ -276,7 +276,7 @@ export class DigestiveSystem {
     stomachGroup.name = 'Anatomical_Stomach_Complex';
 
     // Shader PBR de mucosa y serosa gástrica
-    const gastricMat = new THREE.MeshStandardMaterial({
+    const gastricMat = new THREE.MeshPhysicalMaterial({
       color: 0x9e4736, // Mucosa gástrica vascularizada
       roughness: 0.32,
       metalness: 0.04,
@@ -368,7 +368,7 @@ export class DigestiveSystem {
    * Vesícula Biliar (Almacén y concentración de bilis)
    */
   private buildGallbladder(): void {
-    const bileMat = new THREE.MeshStandardMaterial({
+    const bileMat = new THREE.MeshPhysicalMaterial({
       color: 0x3d7041, // Verde oliva biliar intenso
       roughness: 0.25,
       metalness: 0.05,

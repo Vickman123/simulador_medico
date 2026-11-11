@@ -38,7 +38,7 @@ export class CirculatorySystem {
           this.heartMesh.name = 'Anatomical_Heart';
 
           // Shader PBR de tejido miocárdico húmedo con serosa brillante
-          const heartMat = new THREE.MeshStandardMaterial({
+          const heartMat = new THREE.MeshPhysicalMaterial({
             color: 0x8b1e2a, // Rojo miocárdico profundo
             roughness: 0.3,
             metalness: 0.05,

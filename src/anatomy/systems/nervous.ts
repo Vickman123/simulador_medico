@@ -38,7 +38,7 @@ export class NervousSystem {
           this.brainMesh.name = 'Anatomical_Brain';
 
           // Color y textura de sustancia gris/corteza cerebral real (Gris rosáceo con piamadre húmeda)
-          const brainMat = new THREE.MeshStandardMaterial({
+          const brainMat = new THREE.MeshPhysicalMaterial({
             color: 0xc4a494, // Gris rosáceo parenquimatoso real (no morado artificial)
             roughness: 0.38,
             metalness: 0.04,

@@ -32,7 +32,7 @@ export class MuscularSystem {
           this.modelGroup.name = 'Anatomical_Muscles_Model';
 
           // 1. Biological Striated Muscle Material (Rojo carmesí fibrilar)
-          const muscleMat = new THREE.MeshStandardMaterial({
+          const muscleMat = new THREE.MeshPhysicalMaterial({
             color: 0x9b1c2e, // Deep anatomical muscle tone
             roughness: 0.42,
             metalness: 0.05,
@@ -42,7 +42,7 @@ export class MuscularSystem {
           });
 
           // 2. Aponeurosis and Tendon Material (Blanco perla nacarado)
-          const tendonMat = new THREE.MeshStandardMaterial({
+          const tendonMat = new THREE.MeshPhysicalMaterial({
             color: 0xf1f5f9,
             roughness: 0.32,
             metalness: 0.08,

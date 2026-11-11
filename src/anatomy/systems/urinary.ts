@@ -19,7 +19,7 @@ export class UrinarySystem {
   public bladderMesh: THREE.Group | null = null;
   public uretersGroup: THREE.Group;
   public isLoaded: boolean = false;
-  private urinaryMaterials: THREE.MeshStandardMaterial[] = [];
+  private urinaryMaterials: (THREE.MeshStandardMaterial | THREE.MeshPhysicalMaterial)[] = [];
 
   constructor() {
     this.group = new THREE.Group();
@@ -33,7 +33,7 @@ export class UrinarySystem {
     this.buildUreters();
 
     // Shader PBR de corteza renal y cápsula fibrosa con brillo seroso
-    const kidneyMat = new THREE.MeshStandardMaterial({
+    const kidneyMat = new THREE.MeshPhysicalMaterial({
       color: 0x6e2428, // Pardo rojizo renal anatómico (no verde artificial)
       roughness: 0.32,
       metalness: 0.05,
@@ -42,7 +42,7 @@ export class UrinarySystem {
     });
 
     // Shader PBR del músculo detrusor vesical
-    const bladderMat = new THREE.MeshStandardMaterial({
+    const bladderMat = new THREE.MeshPhysicalMaterial({
       color: 0xa8534c, // Detrusor y mucosa vesical
       roughness: 0.36,
       metalness: 0.04,
@@ -206,7 +206,7 @@ export class UrinarySystem {
    * Construcción de uréteres anatómicos (conductos musculares retroperitoneales)
    */
   private buildUreters(): void {
-    const ureterMat = new THREE.MeshStandardMaterial({
+    const ureterMat = new THREE.MeshPhysicalMaterial({
       color: 0xdec0af, // Urotelio aperlado
       roughness: 0.38,
       metalness: 0.04,

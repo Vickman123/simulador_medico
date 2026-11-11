@@ -40,7 +40,7 @@ export class SkeletalSystem {
           });
 
           // 2. Hyaline Cartilage Material (Azul hielo traslúcido para cartílagos costales y articulares)
-          const cartilageMaterial = new THREE.MeshStandardMaterial({
+          const cartilageMaterial = new THREE.MeshPhysicalMaterial({
             color: 0xdbeafe, // Soft hyaline blue
             roughness: 0.32,
             metalness: 0.06,
