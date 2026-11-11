@@ -79,21 +79,21 @@ export class ExperienceManager {
     this.humanBody = new HumanBody();
     this.app.scene.nativeScene.add(this.humanBody.group);
 
-    // 3. Setup Physiological Animations
+    // 3. Setup Physiological Animations (Ancladas a sus respectivos sistemas anatómicos)
     this.cardiacAnim = new CardiacAnimation(this.humanBody.circulatory, () => {
       this.playHeartbeatSound();
     });
     this.circulationAnim = new CirculationAnimation();
-    this.app.scene.nativeScene.add(this.circulationAnim.group);
+    this.humanBody.circulatory.group.add(this.circulationAnim.group);
 
     this.respiratoryAnim = new RespiratoryAnimation(this.humanBody.respiratory);
-    this.app.scene.nativeScene.add(this.respiratoryAnim.group);
+    this.humanBody.respiratory.group.add(this.respiratoryAnim.group);
 
     this.digestiveAnim = new DigestiveAnimation();
-    this.app.scene.nativeScene.add(this.digestiveAnim.group);
+    this.humanBody.digestive.group.add(this.digestiveAnim.group);
 
     this.nervousAnim = new NervousAnimation();
-    this.app.scene.nativeScene.add(this.nervousAnim.group);
+    this.humanBody.nervous.group.add(this.nervousAnim.group);
 
     // 4. Setup 3D Floating Holographic Panel
     this.holographicPanel3D = new HolographicInfoPanel();
@@ -145,9 +145,13 @@ export class ExperienceManager {
         this.isPhysiologyActive = !this.isPhysiologyActive;
         this.cardiacAnim.isEnabled = this.isPhysiologyActive;
         this.circulationAnim.isEnabled = this.isPhysiologyActive;
+        this.circulationAnim.group.visible = this.isPhysiologyActive;
         this.respiratoryAnim.isEnabled = this.isPhysiologyActive;
+        this.respiratoryAnim.group.visible = this.isPhysiologyActive;
         this.digestiveAnim.isEnabled = this.isPhysiologyActive;
+        this.digestiveAnim.group.visible = this.isPhysiologyActive;
         this.nervousAnim.isEnabled = this.isPhysiologyActive;
+        this.nervousAnim.group.visible = this.isPhysiologyActive;
         this.playUiClickSound();
         return this.isPhysiologyActive;
       },
@@ -280,13 +284,21 @@ export class ExperienceManager {
     // 1. Update master human model
     this.humanBody.update(delta, elapsed);
 
-    // 2. Update physiological animations
+    // 2. Update physiological animations (solo cuando el sistema correspondiente está activo y visible)
     if (this.isPhysiologyActive) {
-      this.cardiacAnim.update(delta);
-      this.circulationAnim.update(delta);
-      this.respiratoryAnim.update(delta);
-      this.digestiveAnim.update(delta);
-      this.nervousAnim.update(delta);
+      if (this.humanBody.isSystemVisible('circulatory')) {
+        this.cardiacAnim.update(delta);
+        this.circulationAnim.update(delta);
+      }
+      if (this.humanBody.isSystemVisible('respiratory')) {
+        this.respiratoryAnim.update(delta);
+      }
+      if (this.humanBody.isSystemVisible('digestive')) {
+        this.digestiveAnim.update(delta);
+      }
+      if (this.humanBody.isSystemVisible('nervous')) {
+        this.nervousAnim.update(delta);
+      }
     }
 
     // 3. Update raycasting and controller laser reticles
