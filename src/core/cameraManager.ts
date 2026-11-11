@@ -18,28 +18,28 @@ export class CameraManager {
 
   private presets: Record<CameraPreset, { pos: THREE.Vector3; look: THREE.Vector3 }> = {
     frontal: {
-      pos: new THREE.Vector3(0, 1.35, 2.2),
-      look: new THREE.Vector3(0, 1.05, 0),
+      pos: new THREE.Vector3(-0.14, 1.25, 2.3),
+      look: new THREE.Vector3(-0.06, 1.05, 0),
     },
     posterior: {
-      pos: new THREE.Vector3(0, 1.35, -2.2),
-      look: new THREE.Vector3(0, 1.05, 0),
+      pos: new THREE.Vector3(-0.14, 1.25, -2.3),
+      look: new THREE.Vector3(-0.06, 1.05, 0),
     },
     lateral: {
-      pos: new THREE.Vector3(2.2, 1.35, 0),
+      pos: new THREE.Vector3(2.3, 1.25, 0),
       look: new THREE.Vector3(0, 1.05, 0),
     },
     superior: {
-      pos: new THREE.Vector3(0, 2.7, 0.45),
-      look: new THREE.Vector3(0, 0.95, 0),
+      pos: new THREE.Vector3(-0.10, 2.8, 0.6),
+      look: new THREE.Vector3(-0.05, 0.95, 0),
     },
     torax: {
-      pos: new THREE.Vector3(0, 1.35, 0.85),
-      look: new THREE.Vector3(0, 1.30, 0),
+      pos: new THREE.Vector3(-0.16, 1.30, 1.40),
+      look: new THREE.Vector3(-0.08, 1.25, 0),
     },
     cabeza: {
-      pos: new THREE.Vector3(0, 1.70, 0.65),
-      look: new THREE.Vector3(0, 1.68, 0),
+      pos: new THREE.Vector3(-0.16, 1.65, 1.15),
+      look: new THREE.Vector3(-0.08, 1.62, 0),
     },
   };
 
@@ -59,8 +59,14 @@ export class CameraManager {
   }
 
   public focusOnPoint(pos: [number, number, number], lookAt: [number, number, number]): void {
-    this.targetPosition.set(pos[0], pos[1], pos[2]);
-    this.targetLookAt.set(lookAt[0], lookAt[1], lookAt[2]);
+    const isDesktop = !this.app.session.isPresenting;
+    // En escritorio, compensar el ancho del panel inspector hacia la izquierda para encuadrar en la zona visible
+    const offsetX = isDesktop ? -0.16 : 0.0;
+    // Mantener al menos 1.35m de distancia para que el cuerpo y la cabeza respiren y no se corten
+    const targetZ = isDesktop ? Math.max(pos[2] * 1.55, 1.35) : pos[2];
+
+    this.targetPosition.set(pos[0] + offsetX, pos[1], targetZ);
+    this.targetLookAt.set(lookAt[0] + offsetX * 0.4, lookAt[1], lookAt[2]);
     this.isTransitioning = true;
   }
 

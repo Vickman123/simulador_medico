@@ -131,6 +131,8 @@ export class ExperienceManager {
       },
       onClose: () => {
         this.holographicPanel3D.hide();
+        this.humanBody.restoreMuscularAndSkeletalOpacity();
+        this.cameraMgr.reset();
       },
     });
 
@@ -298,6 +300,7 @@ export class ExperienceManager {
 
   public exitSoloMode(): void {
     this.humanBody.resetIsolation();
+    this.humanBody.restoreMuscularAndSkeletalOpacity();
     this.infoPanelUI.setIsolateState(false);
     if (this.floatingSoloHud) {
       this.floatingSoloHud.classList.add('hidden');
@@ -321,20 +324,27 @@ export class ExperienceManager {
 
     this.playSelectSound();
 
-    // 1. Update 3D Holographic Info Panel
-    this.holographicPanel3D.setStructure(structure);
+    // 1. Update 3D Holographic Info Panel (SOLO EN VR para Meta Quest para evitar duplicar mensajes en PC)
+    if (this.app.session.isPresenting) {
+      this.holographicPanel3D.setStructure(structure);
+    } else {
+      this.holographicPanel3D.hide();
+    }
 
-    // 2. Update 2D Inspector Panel
+    // 2. Update 2D Inspector Panel (Para Desktop / PC)
     if (openInspector) {
       this.infoPanelUI.showStructure(structure);
     }
 
-    // 3. Camera Framing
+    // 3. Auto-revelar el órgano interno si está cubierto por músculos o esqueleto
+    this.humanBody.revealInternalOrgan(structureId);
+
+    // 4. Camera Framing calibrado para no cortar la cabeza ni ser tapado por el panel
     if (structure.suggestedCameraOffset && structure.suggestedLookAt) {
       this.cameraMgr.focusOnPoint(structure.suggestedCameraOffset, structure.suggestedLookAt);
     }
 
-    // 4. Highlight in Organ List
+    // 5. Highlight in Organ List
     this.systemSelectorUI.highlightOrgan(structureId);
   }
 

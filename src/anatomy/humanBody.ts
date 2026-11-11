@@ -398,6 +398,64 @@ export class HumanBody {
     return this.isSoloMode;
   }
 
+  public revealInternalOrgan(structureId: string): void {
+    const def = ANATOMICAL_STRUCTURES[structureId];
+    if (!def) return;
+
+    if (def.systemId !== 'muscular' && def.systemId !== 'skeletal') {
+      // Atenuar músculos para que el órgano interno sea inmediatamente visible en su sitio anatómico
+      if (this.systemStates.muscular) {
+        this.muscular.group.traverse((c) => {
+          if ((c as THREE.Mesh).isMesh) {
+            const mat = (c as THREE.Mesh).material as THREE.MeshStandardMaterial;
+            if (mat) {
+              mat.transparent = true;
+              mat.opacity = 0.16;
+            }
+          }
+        });
+      }
+      // Atenuar levemente esqueleto para que las costillas no tapen el corazón o pulmones
+      if (this.systemStates.skeletal) {
+        this.skeletal.group.traverse((c) => {
+          if ((c as THREE.Mesh).isMesh) {
+            const mat = (c as THREE.Mesh).material as THREE.MeshStandardMaterial;
+            if (mat) {
+              mat.transparent = true;
+              mat.opacity = 0.25;
+            }
+          }
+        });
+      }
+      // Asegurar que el sistema del órgano seleccionado esté encendido
+      this.setSystemVisibility(def.systemId, true);
+    } else {
+      this.restoreMuscularAndSkeletalOpacity();
+    }
+  }
+
+  public restoreMuscularAndSkeletalOpacity(): void {
+    this.muscular.group.traverse((c) => {
+      if ((c as THREE.Mesh).isMesh) {
+        const mat = (c as THREE.Mesh).material as THREE.MeshStandardMaterial;
+        if (mat) {
+          mat.transparent = false;
+          mat.opacity = 1.0;
+        }
+      }
+    });
+
+    this.skeletal.group.traverse((c) => {
+      if ((c as THREE.Mesh).isMesh) {
+        const mat = (c as THREE.Mesh).material as THREE.MeshStandardMaterial;
+        if (mat) {
+          mat.transparent = false;
+          mat.opacity = 1.0;
+        }
+      }
+    });
+  }
+
   public toggleVisceralView(): boolean {
     // Si muscular u óseo están activos, apagarlos para ver órganos internos
     const areCoveringsActive = this.systemStates.muscular || this.systemStates.skeletal;
