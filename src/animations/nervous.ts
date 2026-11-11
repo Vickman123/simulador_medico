@@ -30,45 +30,57 @@ export class NervousAnimation {
       ])
     );
 
-    // 2. Right Brachial nerve
+    // 2. Right Brachial nerve & Median nerve (brazo derecho anatómico, x < 0)
     this.nerveCurves.push(
       new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0, 1.45, -0.025),
-        new THREE.Vector3(0.08, 1.45, -0.01),
-        new THREE.Vector3(0.18, 1.38, 0.0),
-        new THREE.Vector3(0.28, 1.25, 0.0),
-        new THREE.Vector3(0.35, 1.05, 0.0),
+        new THREE.Vector3(-0.025, 1.44, -0.025), // Raíces cervicales C5-T1
+        new THREE.Vector3(-0.080, 1.41, -0.025), // Hueco axilar
+        new THREE.Vector3(-0.140, 1.34, -0.030), // Cara medial brazo
+        new THREE.Vector3(-0.185, 1.24, -0.025), // Surco bicipital medial
+        new THREE.Vector3(-0.210, 1.12, -0.015), // Fosa cubital (codo)
+        new THREE.Vector3(-0.235, 0.98, -0.010), // Antebrazo anterior
+        new THREE.Vector3(-0.245, 0.86, 0.005),  // Muñeca / túnel carpiano
+        new THREE.Vector3(-0.250, 0.78, 0.015),  // Palma
       ])
     );
 
-    // 3. Left Brachial nerve
+    // 3. Left Brachial nerve & Median nerve (brazo izquierdo anatómico, x > 0)
     this.nerveCurves.push(
       new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0, 1.45, -0.025),
-        new THREE.Vector3(-0.08, 1.45, -0.01),
-        new THREE.Vector3(-0.18, 1.38, 0.0),
-        new THREE.Vector3(-0.28, 1.25, 0.0),
-        new THREE.Vector3(-0.35, 1.05, 0.0),
+        new THREE.Vector3(0.025, 1.44, -0.025),  // Raíces cervicales C5-T1
+        new THREE.Vector3(0.080, 1.41, -0.025),  // Hueco axilar
+        new THREE.Vector3(0.140, 1.34, -0.030),  // Cara medial brazo
+        new THREE.Vector3(0.185, 1.24, -0.025),  // Surco bicipital medial
+        new THREE.Vector3(0.210, 1.12, -0.015),  // Fosa cubital (codo)
+        new THREE.Vector3(0.235, 0.98, -0.010),  // Antebrazo anterior
+        new THREE.Vector3(0.245, 0.86, 0.005),   // Muñeca / túnel carpiano
+        new THREE.Vector3(0.250, 0.78, 0.015),   // Palma
       ])
     );
 
-    // 4. Right Sciatic nerve
+    // 4. Right Sciatic nerve (pierna derecha anatómica)
     this.nerveCurves.push(
       new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0, 1.05, -0.025),
-        new THREE.Vector3(0.05, 0.95, -0.02),
-        new THREE.Vector3(0.08, 0.65, -0.01),
-        new THREE.Vector3(0.075, 0.45, -0.01),
+        new THREE.Vector3(-0.025, 1.02, -0.040),
+        new THREE.Vector3(-0.055, 0.92, -0.055),
+        new THREE.Vector3(-0.082, 0.80, -0.050),
+        new THREE.Vector3(-0.088, 0.62, -0.045),
+        new THREE.Vector3(-0.082, 0.44, -0.040),
+        new THREE.Vector3(-0.078, 0.28, -0.035),
+        new THREE.Vector3(-0.072, 0.12, -0.030),
       ])
     );
 
-    // 5. Left Sciatic nerve
+    // 5. Left Sciatic nerve (pierna izquierda anatómica)
     this.nerveCurves.push(
       new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0, 1.05, -0.025),
-        new THREE.Vector3(-0.05, 0.95, -0.02),
-        new THREE.Vector3(-0.08, 0.65, -0.01),
-        new THREE.Vector3(-0.075, 0.45, -0.01),
+        new THREE.Vector3(0.025, 1.02, -0.040),
+        new THREE.Vector3(0.055, 0.92, -0.055),
+        new THREE.Vector3(0.082, 0.80, -0.050),
+        new THREE.Vector3(0.088, 0.62, -0.045),
+        new THREE.Vector3(0.082, 0.44, -0.040),
+        new THREE.Vector3(0.078, 0.28, -0.035),
+        new THREE.Vector3(0.072, 0.12, -0.030),
       ])
     );
 

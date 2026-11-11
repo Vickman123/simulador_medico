@@ -162,41 +162,86 @@ export class NervousSystem {
       emissiveIntensity: 0.18,
     });
 
-    // Plexos braquiales a miembros superiores
+    // 1. Plexos braquiales y nervios medianos/radiales a miembros superiores
+    // Coordenadas calibradas anatómicamente para discurrir estrictamente por dentro del brazo
     const rBrachial = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0.015, 1.45, -0.02),
-      new THREE.Vector3(0.08, 1.42, -0.01),
-      new THREE.Vector3(0.18, 1.34, 0.0),
-      new THREE.Vector3(0.28, 1.20, 0.0),
-      new THREE.Vector3(0.35, 1.02, 0.0),
+      new THREE.Vector3(-0.025, 1.44, -0.025), // Raíces cervicales C5-T1
+      new THREE.Vector3(-0.080, 1.41, -0.025), // Hueco axilar / debajo de clavícula
+      new THREE.Vector3(-0.140, 1.34, -0.030), // Cara medial del brazo proximal
+      new THREE.Vector3(-0.185, 1.24, -0.025), // Surco bicipital medial
+      new THREE.Vector3(-0.210, 1.12, -0.015), // Fosa cubital (pliegue anterior del codo)
+      new THREE.Vector3(-0.235, 0.98, -0.010), // Compartimento anterior del antebrazo
+      new THREE.Vector3(-0.245, 0.86, 0.005),  // Túnel carpiano / muñeca
+      new THREE.Vector3(-0.250, 0.78, 0.015),  // Ramas palmares
     ]);
-    const lBrachial = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(-0.015, 1.45, -0.02),
-      new THREE.Vector3(-0.08, 1.42, -0.01),
-      new THREE.Vector3(-0.18, 1.34, 0.0),
-      new THREE.Vector3(-0.28, 1.20, 0.0),
-      new THREE.Vector3(-0.35, 1.02, 0.0),
-    ]);
-    this.peripheralGroup.add(new THREE.Mesh(new THREE.TubeGeometry(rBrachial, 20, 0.003, 8, false), nerveMat));
-    this.peripheralGroup.add(new THREE.Mesh(new THREE.TubeGeometry(lBrachial, 20, 0.003, 8, false), nerveMat));
 
-    // Nervios ciáticos a miembros inferiores
+    const lBrachial = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0.025, 1.44, -0.025),  // Raíces cervicales C5-T1
+      new THREE.Vector3(0.080, 1.41, -0.025),  // Hueco axilar / debajo de clavícula
+      new THREE.Vector3(0.140, 1.34, -0.030),  // Cara medial del brazo proximal
+      new THREE.Vector3(0.185, 1.24, -0.025),  // Surco bicipital medial
+      new THREE.Vector3(0.210, 1.12, -0.015),  // Fosa cubital (pliegue anterior del codo)
+      new THREE.Vector3(0.235, 0.98, -0.010),  // Compartimento anterior del antebrazo
+      new THREE.Vector3(0.245, 0.86, 0.005),   // Túnel carpiano / muñeca
+      new THREE.Vector3(0.250, 0.78, 0.015),   // Ramas palmares
+    ]);
+
+    const rBrachMesh = new THREE.Mesh(new THREE.TubeGeometry(rBrachial, 28, 0.0028, 8, false), nerveMat);
+    rBrachMesh.userData = {
+      systemId: 'nervous',
+      structureId: 'spinal_cord',
+      structureName: 'Plexo Braquial y Nervio Mediano Derecho',
+      selectable: true,
+    };
+    this.peripheralGroup.add(rBrachMesh);
+
+    const lBrachMesh = new THREE.Mesh(new THREE.TubeGeometry(lBrachial, 28, 0.0028, 8, false), nerveMat);
+    lBrachMesh.userData = {
+      systemId: 'nervous',
+      structureId: 'spinal_cord',
+      structureName: 'Plexo Braquial y Nervio Mediano Izquierdo',
+      selectable: true,
+    };
+    this.peripheralGroup.add(lBrachMesh);
+
+    // 2. Nervios ciáticos y tibiales a miembros inferiores (trayecto posterior fisiológico)
     const rSciatic = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0.015, 1.02, -0.025),
-      new THREE.Vector3(0.045, 0.92, -0.02),
-      new THREE.Vector3(0.068, 0.82, -0.01),
-      new THREE.Vector3(0.075, 0.62, -0.01),
-      new THREE.Vector3(0.07, 0.42, -0.01),
+      new THREE.Vector3(-0.025, 1.02, -0.040), // Tronco lumbosacro
+      new THREE.Vector3(-0.055, 0.92, -0.055), // Agujero ciático mayor / piriforme
+      new THREE.Vector3(-0.082, 0.80, -0.050), // Cara posterior del muslo (fémur)
+      new THREE.Vector3(-0.088, 0.62, -0.045), // Compartimento isquiotibial
+      new THREE.Vector3(-0.082, 0.44, -0.040), // Fosa poplítea (detrás de rodilla)
+      new THREE.Vector3(-0.078, 0.28, -0.035), // Nervio tibial posterior
+      new THREE.Vector3(-0.072, 0.12, -0.030), // Maléolo medial y planta
     ]);
+
     const lSciatic = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(-0.015, 1.02, -0.025),
-      new THREE.Vector3(-0.045, 0.92, -0.02),
-      new THREE.Vector3(-0.068, 0.82, -0.01),
-      new THREE.Vector3(-0.075, 0.62, -0.01),
-      new THREE.Vector3(-0.07, 0.42, -0.01),
+      new THREE.Vector3(0.025, 1.02, -0.040),  // Tronco lumbosacro
+      new THREE.Vector3(0.055, 0.92, -0.055),  // Agujero ciático mayor / piriforme
+      new THREE.Vector3(0.082, 0.80, -0.050),  // Cara posterior del muslo (fémur)
+      new THREE.Vector3(0.088, 0.62, -0.045),  // Compartimento isquiotibial
+      new THREE.Vector3(0.082, 0.44, -0.040),  // Fosa poplítea (detrás de rodilla)
+      new THREE.Vector3(0.078, 0.28, -0.035),  // Nervio tibial posterior
+      new THREE.Vector3(0.072, 0.12, -0.030),  // Maléolo medial y planta
     ]);
-    this.peripheralGroup.add(new THREE.Mesh(new THREE.TubeGeometry(rSciatic, 24, 0.0035, 8, false), nerveMat));
-    this.peripheralGroup.add(new THREE.Mesh(new THREE.TubeGeometry(lSciatic, 24, 0.0035, 8, false), nerveMat));
+
+    const rSciatMesh = new THREE.Mesh(new THREE.TubeGeometry(rSciatic, 28, 0.0032, 8, false), nerveMat);
+    rSciatMesh.userData = {
+      systemId: 'nervous',
+      structureId: 'spinal_cord',
+      structureName: 'Nervio Ciático Mayor Derecho',
+      selectable: true,
+    };
+    this.peripheralGroup.add(rSciatMesh);
+
+    const lSciatMesh = new THREE.Mesh(new THREE.TubeGeometry(lSciatic, 28, 0.0032, 8, false), nerveMat);
+    lSciatMesh.userData = {
+      systemId: 'nervous',
+      structureId: 'spinal_cord',
+      structureName: 'Nervio Ciático Mayor Izquierdo',
+      selectable: true,
+    };
+    this.peripheralGroup.add(lSciatMesh);
   }
 
   private buildProceduralBrain(): void {
