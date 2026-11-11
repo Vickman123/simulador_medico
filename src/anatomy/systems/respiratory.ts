@@ -6,6 +6,7 @@
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { resolveModelUrl } from '../../core/assetHelper.js';
 
 export class RespiratorySystem {
   public readonly group: THREE.Group;
@@ -30,7 +31,7 @@ export class RespiratorySystem {
       this.buildTracheaAndBronchi();
 
       loader.load(
-        'models/lungs.glb',
+        resolveModelUrl('models/lungs.glb'),
         (gltf) => {
           this.lungsMesh = gltf.scene;
           this.lungsMesh.name = 'Anatomical_Lungs';

@@ -28,11 +28,11 @@ export class XRSessionManager {
   }
 
   private setupSessionListeners(): void {
-    this.app.session.onStateChange(async (isVR) => {
+    this.app.session.onStateChange(async (isVR, activeSession) => {
       console.log(`[XRSessionManager] Session state changed: ${isVR ? 'ENTER VR' : 'EXIT VR'}`);
 
       if (isVR) {
-        const session = this.app.session.activeSession;
+        const session = activeSession || this.app.session.currentSession;
         if (session) {
           // 1. Optimize target frame rate for Meta Quest (72Hz / 90Hz)
           try {
@@ -65,6 +65,6 @@ export class XRSessionManager {
   }
 
   public get isInVR(): boolean {
-    return this.app.session.isInVR;
+    return this.app.session.isPresenting;
   }
 }

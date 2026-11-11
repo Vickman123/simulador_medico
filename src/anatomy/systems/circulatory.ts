@@ -6,6 +6,7 @@
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { resolveModelUrl } from '../../core/assetHelper.js';
 
 export class CirculatorySystem {
   public readonly group: THREE.Group;
@@ -32,7 +33,7 @@ export class CirculatorySystem {
 
       // 2. Load high-resolution anatomical Heart GLB
       loader.load(
-        'models/heart.glb',
+        resolveModelUrl('models/heart.glb'),
         (gltf) => {
           this.heartMesh = gltf.scene;
           this.heartMesh.name = 'Anatomical_Heart';

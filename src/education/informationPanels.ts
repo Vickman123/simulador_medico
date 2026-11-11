@@ -85,6 +85,31 @@ export class HolographicInfoPanel {
     this.group.visible = true;
   }
 
+  private drawRoundedRect(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    r: number
+  ): void {
+    if (typeof (ctx as any).roundRect === 'function') {
+      (ctx as any).roundRect(x, y, w, h, r);
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+  }
+
   private renderStructureScreen(structure: AnatomicalStructure): void {
     const ctx = this.ctx;
     const w = this.canvas.width;
@@ -99,13 +124,13 @@ export class HolographicInfoPanel {
     bgGrad.addColorStop(0, 'rgba(4, 9, 24, 0.92)');
     bgGrad.addColorStop(1, 'rgba(2, 6, 16, 0.96)');
     ctx.fillStyle = bgGrad;
-    ctx.roundRect(10, 10, w - 20, h - 20, 24);
+    this.drawRoundedRect(ctx, 10, 10, w - 20, h - 20, 24);
     ctx.fill();
 
     // Glowing border
     ctx.lineWidth = 4;
     ctx.strokeStyle = sys ? sys.accentColor : '#00f0ff';
-    ctx.roundRect(10, 10, w - 20, h - 20, 24);
+    this.drawRoundedRect(ctx, 10, 10, w - 20, h - 20, 24);
     ctx.stroke();
 
     // Header bar
@@ -196,12 +221,12 @@ export class HolographicInfoPanel {
 
     ctx.clearRect(0, 0, w, h);
     ctx.fillStyle = 'rgba(4, 9, 24, 0.94)';
-    ctx.roundRect(10, 10, w - 20, h - 20, 24);
+    this.drawRoundedRect(ctx, 10, 10, w - 20, h - 20, 24);
     ctx.fill();
 
     ctx.lineWidth = 3;
     ctx.strokeStyle = '#00f0ff';
-    ctx.roundRect(10, 10, w - 20, h - 20, 24);
+    this.drawRoundedRect(ctx, 10, 10, w - 20, h - 20, 24);
     ctx.stroke();
 
     ctx.font = '700 38px "Segoe UI", Roboto, sans-serif';

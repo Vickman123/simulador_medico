@@ -220,12 +220,16 @@ export class ExperienceManager {
     });
 
     const vrBtn = header.querySelector('#btn-enter-vr') as HTMLElement;
-    vrBtn.addEventListener('click', () => {
+    vrBtn.addEventListener('click', async () => {
       if (!navigator.xr) {
         alert('WebXR no está disponible en este navegador. Para la experiencia completa en Meta Quest 3/3S, abre esta página desde Meta Quest Browser.');
         return;
       }
-      this.app.session.requestSession('immersive-vr');
+      try {
+        await this.app.session.enterVR();
+      } catch (err) {
+        console.error('[HUMAN XR] Error al iniciar sesión WebXR:', err);
+      }
     });
 
     // Append interface components

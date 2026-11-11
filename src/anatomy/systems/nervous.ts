@@ -6,6 +6,7 @@
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { resolveModelUrl } from '../../core/assetHelper.js';
 
 export class NervousSystem {
   public readonly group: THREE.Group;
@@ -30,7 +31,7 @@ export class NervousSystem {
 
     const loadBrain = new Promise<void>((resolve) => {
       loader.load(
-        'models/brain.glb',
+        resolveModelUrl('models/brain.glb'),
         (gltf) => {
           this.brainMesh = gltf.scene;
           this.brainMesh.name = 'Anatomical_Brain';
@@ -88,7 +89,7 @@ export class NervousSystem {
 
     const loadSpine = new Promise<void>((resolve) => {
       loader.load(
-        'models/spinal_cord.glb',
+        resolveModelUrl('models/spinal_cord.glb'),
         (gltf) => {
           this.spinalMesh = gltf.scene;
           this.spinalMesh.name = 'Anatomical_SpinalCord';

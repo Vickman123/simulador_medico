@@ -6,6 +6,7 @@
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { resolveModelUrl } from '../../core/assetHelper.js';
 
 export class EndocrineSystem {
   public readonly group: THREE.Group;
@@ -32,7 +33,7 @@ export class EndocrineSystem {
 
     const loadThymus = new Promise<void>((resolve) => {
       loader.load(
-        'models/thymus.glb',
+        resolveModelUrl('models/thymus.glb'),
         (gltf) => {
           this.thymusMesh = gltf.scene;
           this.thymusMesh.name = 'Anatomical_Thymus';
@@ -84,7 +85,7 @@ export class EndocrineSystem {
 
     const loadPancreas = new Promise<void>((resolve) => {
       loader.load(
-        'models/pancreas.glb',
+        resolveModelUrl('models/pancreas.glb'),
         (gltf) => {
           this.pancreasMesh = gltf.scene;
           this.pancreasMesh.name = 'Anatomical_Pancreas';

@@ -63,7 +63,7 @@ export class ControllerManager {
       this.app.scene.nativeScene.add(reticle);
 
       // Attach laser line to controller space in XRSession
-      const controller = this.app.session.getController(i);
+      const controller = this.app.session.controllers[i];
       if (controller) {
         controller.add(laser);
       }

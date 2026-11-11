@@ -6,6 +6,7 @@
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { resolveModelUrl } from '../../core/assetHelper.js';
 
 export class UrinarySystem {
   public readonly group: THREE.Group;
@@ -42,7 +43,7 @@ export class UrinarySystem {
 
     const loadLeftKidney = new Promise<void>((resolve) => {
       loader.load(
-        'models/kidney_left.glb',
+        resolveModelUrl('models/kidney_left.glb'),
         (gltf) => {
           this.kidneyLeftMesh = gltf.scene;
           this.kidneyLeftMesh.name = 'Anatomical_Kidney_L';
@@ -87,7 +88,7 @@ export class UrinarySystem {
 
     const loadRightKidney = new Promise<void>((resolve) => {
       loader.load(
-        'models/kidney_right.glb',
+        resolveModelUrl('models/kidney_right.glb'),
         (gltf) => {
           this.kidneyRightMesh = gltf.scene;
           this.kidneyRightMesh.name = 'Anatomical_Kidney_R';
@@ -133,7 +134,7 @@ export class UrinarySystem {
 
     const loadBladder = new Promise<void>((resolve) => {
       loader.load(
-        'models/bladder.glb',
+        resolveModelUrl('models/bladder.glb'),
         (gltf) => {
           this.bladderMesh = gltf.scene;
           this.bladderMesh.name = 'Anatomical_Bladder';

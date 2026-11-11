@@ -52,7 +52,7 @@ export class UnifiedRaycaster {
       this.isPointerDown = false;
 
       // Only handle selection when NOT in active VR session
-      if (!this.app.session.isInVR) {
+      if (!this.app.session.isPresenting) {
         const hits = this.app.raycastPointer(e);
         this.processHitSelection(hits);
       }
@@ -88,7 +88,7 @@ export class UnifiedRaycaster {
   public update(selectableTargets: THREE.Object3D[]): void {
     let activeHit: THREE.Intersection | null = null;
 
-    if (this.app.session.isInVR) {
+    if (this.app.session.isPresenting) {
       // 1. Raycast in WebXR via Controllers
       const controllerHits = this.controllers.updatePointers(selectableTargets);
       for (const ch of controllerHits) {

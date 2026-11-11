@@ -6,6 +6,7 @@
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { resolveModelUrl } from '../../core/assetHelper.js';
 
 export class SkeletalSystem {
   public readonly group: THREE.Group;
@@ -23,7 +24,7 @@ export class SkeletalSystem {
   public async load(loader: GLTFLoader, onProgress?: (percent: number) => void): Promise<THREE.Group> {
     return new Promise((resolve, reject) => {
       loader.load(
-        'models/skeleton.glb',
+        resolveModelUrl('models/skeleton.glb'),
         (gltf) => {
           const model = gltf.scene;
           model.name = 'Skeleton_Model';

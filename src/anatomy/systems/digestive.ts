@@ -6,6 +6,7 @@
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { resolveModelUrl } from '../../core/assetHelper.js';
 
 export class DigestiveSystem {
   public readonly group: THREE.Group;
@@ -29,7 +30,7 @@ export class DigestiveSystem {
 
     const loadLiver = new Promise<void>((resolve) => {
       loader.load(
-        'models/liver.glb',
+        resolveModelUrl('models/liver.glb'),
         (gltf) => {
           this.liverMesh = gltf.scene;
           this.liverMesh.name = 'Anatomical_Liver';
@@ -81,7 +82,7 @@ export class DigestiveSystem {
 
     const loadSmallIntestine = new Promise<void>((resolve) => {
       loader.load(
-        'models/intestine_small.glb',
+        resolveModelUrl('models/intestine_small.glb'),
         (gltf) => {
           this.smallIntestineMesh = gltf.scene;
           this.smallIntestineMesh.name = 'Anatomical_SmallIntestine';
@@ -131,7 +132,7 @@ export class DigestiveSystem {
 
     const loadLargeIntestine = new Promise<void>((resolve) => {
       loader.load(
-        'models/intestine_large.glb',
+        resolveModelUrl('models/intestine_large.glb'),
         (gltf) => {
           this.largeIntestineMesh = gltf.scene;
           this.largeIntestineMesh.name = 'Anatomical_LargeIntestine';

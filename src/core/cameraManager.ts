@@ -69,7 +69,7 @@ export class CameraManager {
   }
 
   public update(delta: number): void {
-    if (!this.isTransitioning || this.app.session.isInVR) return;
+    if (!this.isTransitioning || this.app.session.isPresenting) return;
 
     const camera = this.app.camera;
     const controls = this.app.controls;
